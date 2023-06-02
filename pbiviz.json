@@ -1,0 +1,25 @@
+   
+{
+    "author": {
+      "name": "Ilfat Galiev",
+      "email": "zbritva@gmail.com"
+    },
+    "visual": {
+      "name": "ECharts visual",
+      "displayName": "ECharts Visual",
+      "guid": "echarts",
+      "visualClassName": "Visual",
+      "version": "1.0.0.0",
+      "description": "Integrate ECharts into Power BI Visual",
+      "supportUrl": "https://zbritva.click/",
+      "gitHubUrl": "https://github.com/zbritva"
+    },
+    "apiVersion": "5.4.0",
+    "assets": {
+      "icon": "assets/icon.png"
+    },
+    "externalJS": [],
+    "style": "style/visual.scss",
+    "capabilities": "capabilities.json",
+    "stringResources": []
+  }
