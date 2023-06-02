@@ -7,8 +7,7 @@ module.exports = {
     root: true,
     parser: "@typescript-eslint/parser",
     parserOptions: {
-        project: "tsconfig.json",
-        tsconfigRootDir: ".",
+        tsconfigRootDir: __dirname,
     },
     plugins: [
         "powerbi-visuals"
