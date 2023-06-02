@@ -125,7 +125,7 @@ module.exports = {
                 ],
             },
             {
-                test: /\.(woff|ttf|ico|woff2|jpg|jpeg|png|webp|svg)$/i,
+                test: /\.(woff|ttf|ico|woff2|jpg|jpeg|png|webp|svg|gif)$/i,
                 use: [
                     {
                         loader: 'base64-inline-loader'

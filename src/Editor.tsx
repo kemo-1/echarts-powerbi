@@ -5,6 +5,7 @@ import { toJson } from 'really-relaxed-json';
 
 import ace from 'brace';
 import { Viewer } from "./View";
+import { getTheFirstDataset } from "./utils";
 require('brace/mode/json');
 // require('brace/theme/monokai');
 
@@ -169,13 +170,4 @@ export const Editor: React.FC<EditorProps> = ({ height, width, echartJson, datas
         </>
     );
 };
-function getTheFirstDataset(dataset: echarts.EChartOption.Dataset | echarts.EChartOption.Dataset[]) {
-    let ds;
-    if (dataset instanceof Array) {
-        ds = dataset[0];
-    } else {
-        ds = dataset;
-    }
-    return ds;
-}
 

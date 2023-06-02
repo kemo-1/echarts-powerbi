@@ -7,11 +7,13 @@ import VisualUpdateOptions = powerbiApi.extensibility.visual.VisualUpdateOptions
 import { VisualSettings } from './settings';
 import { Viewer } from './View';
 import { Editor } from './Editor';
+import { Tutorial } from './Tutorial';
+import { Mapping } from './Mapping';
 
 // import { strings } from './strings';
 // import { sanitize } from "dompurify";
 
-import { defaultDompurifyConfig, createDataset, verifyColumns, getChartColumns } from "./utils";
+import { createDataset, verifyColumns, getChartColumns } from "./utils";
 
 export interface ApplicationProps {
     host: powerbiApi.extensibility.visual.IVisualHost
@@ -76,6 +78,10 @@ const ApplicationContainer: React.ForwardRefRenderFunction<ApplicationPropsRef, 
     //     } 
     // }, [sanitize, defaultDompurifyConfig]);
 
+    if (!option) {
+        return (<p>Loading...</p>)
+    }
+
     if (option && settings && option.editMode === powerbiApi.EditMode.Advanced) {
         host.tooltipService.hide({immediately: true, isTouchEvent: false});
         host.licenseManager.clearLicenseNotification();
@@ -89,15 +95,25 @@ const ApplicationContainer: React.ForwardRefRenderFunction<ApplicationPropsRef, 
             />
         );
     } else {
-        if (unmappedColumns.length) {
+        if (option && unmappedColumns.length) {
             return (
-                <p>Mapping</p>
+                <Mapping
+                    height={option.viewport.height}
+                    width={option.viewport.width}
+                    dataView={dataView}
+                    dataset={dataset}
+                    unmappedColumns={unmappedColumns}
+                />
             )
         } else {
             const categorical = dataView?.categorical;
-            if (!dataView && !categorical) {
+            if (!dataView && !categorical || settings && settings.chart.schema === '{}') {
                 return (
-                    <p>Tutorial</p>
+                    <Tutorial
+                        height={option.viewport.height}
+                        width={option.viewport.width}
+                        dataset={dataset}
+                    />
                 )
             }
 

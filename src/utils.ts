@@ -90,3 +90,14 @@ export function verifyColumnsByType(options: EChartOption<Series>, visualColumns
     });
 
 }
+
+
+export function getTheFirstDataset(dataset: echarts.EChartOption.Dataset | echarts.EChartOption.Dataset[]) : echarts.EChartOption.Dataset {
+    let ds;
+    if (dataset instanceof Array) {
+        ds = dataset[0];
+    } else {
+        ds = dataset;
+    }
+    return ds;
+}
