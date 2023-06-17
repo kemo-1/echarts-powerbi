@@ -22,6 +22,18 @@ export function getChartColumns(echartJson: string) {
     const json = toJson(echartJson);
     const chart = JSON.parse(json);
     if (chart.dataset) {
+        if (chart.dataset.dimensions && chart.dataset.dimensions instanceof Array) {
+            const columns = [];
+            chart.dataset.dimensions.forEach((dimension: string | Record<string, string>) => {
+                if (typeof dimension === 'string') {
+                    columns.push(dimension);
+                } else {
+                    columns.push(dimension.name);
+                }
+            });
+
+            return columns;
+        }
         if (chart.dataset.source[0]) {
             return chart.dataset.source[0];
         }
@@ -32,6 +44,7 @@ export function getChartColumns(echartJson: string) {
 
 export function createDataset(dataView: powerbiVisualsApi.DataView | null) {
     const dataSources: echarts.EChartOption.Dataset | echarts.EChartOption.Dataset[] = {
+        dimensions: [],
         source: []
     };
     if (!dataView) {
@@ -45,12 +58,12 @@ export function createDataset(dataView: powerbiVisualsApi.DataView | null) {
 
         if (powerbiColumns[0]) {
             // create header 
-            const headers: powerbiVisualsApi.PrimitiveValue[] = [];
+            const headers: string[] = [];
             powerbiColumns.forEach((powerbiColumn) => {
                 headers.push(powerbiColumn.source.displayName);
             });
-            if (dataSources.source instanceof Array) {
-                dataSources.source.push(headers);
+            if (dataSources.dimensions && dataSources.dimensions  instanceof Array) {
+                dataSources.dimensions = headers;
             }
 
             powerbiColumns[0].values.forEach((_value, rowIndex) => {
@@ -70,8 +83,39 @@ export function createDataset(dataView: powerbiVisualsApi.DataView | null) {
     return dataSources;
 }
 
-export function verifyColumns(chartColumns: string[], visualColumns: powerbiVisualsApi.DataViewMetadataColumn[]) {
-    return chartColumns.filter(ch => visualColumns.find(vc => vc.displayName === ch) === undefined);
+export function walk(key: string, tree: Record<string, unknown | unknown[]> | unknown, apply: (key: string, value: any) => void) {
+    if (typeof tree !== 'object') {
+        apply(key, tree);
+        return;
+    }
+    for (const key in tree) {
+        if (tree[key] instanceof Array) {
+            const array = tree[key] as Array<unknown>;
+            array.forEach((el, index) => {
+                walk(index.toString(), el, apply);
+            });
+        }
+    }
+}
+
+export function verifyColumns(echartJson: any | undefined, chartColumns: string[], visualColumns: powerbiVisualsApi.DataViewMetadataColumn[]) {
+    // TODO walk through tree to find encode
+    const unmappedColumns = [];
+    debugger;
+    if (echartJson && echartJson !== "{}") {
+        walk(null, echartJson, (key: string, value: any) => {
+            if (key === 'encode') {
+                const columnMapped = visualColumns.find(vc => vc.displayName === value);
+                if (!columnMapped) {
+                    unmappedColumns.push(value);
+                }
+            }
+        })
+    } else {
+        // chartColumns.filter(ch => visualColumns.find(vc => vc.displayName === ch) === undefined);
+        // old mapping 
+    }
+    return unmappedColumns;
 }
 
 export function verifyColumnsByType(options: EChartOption<Series>, visualColumns: powerbiVisualsApi.DataViewMetadataColumn[]) {

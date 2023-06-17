@@ -40,7 +40,7 @@ const ApplicationContainer: React.ForwardRefRenderFunction<ApplicationPropsRef, 
 
     const dataset = createDataset(dataView);
     const chartColumns = getChartColumns(settings?.chart.schema);
-    const unmappedColumns = chartColumns && dataView?.metadata.columns ? verifyColumns(chartColumns, dataView?.metadata.columns) : [];
+    const unmappedColumns = chartColumns && dataView?.metadata.columns ? verifyColumns(settings?.chart?.schema ,chartColumns, dataView?.metadata.columns) : [];
 
     const persistProperty = React.useCallback((json_string: string) => {
         const instance: powerbiApi.VisualObjectInstance = {
@@ -58,25 +58,9 @@ const ApplicationContainer: React.ForwardRefRenderFunction<ApplicationPropsRef, 
         });
     }, [host]);
 
-    // const convert = React.useCallback((v: powerbiApi.PrimitiveValue, type: powerbiApi.ValueTypeDescriptor): powerbiApi.PrimitiveValue => {
-    //     if (v === null || v === undefined || v === false) {
-    //         return v as powerbiApi.PrimitiveValue;
-    //     } else {
-    //         const safeValue = sanitize(v as any, defaultDompurifyConfig);
-    //         if (type.numeric || type.integer) {
-    //             return +safeValue;
-    //         }
-    //         if (type.temporal || type.dateTime) {
-    //             if (v instanceof Date) {
-    //                 return v as powerbiApi.PrimitiveValue;
-    //             }
-    //             if (typeof v === 'number') {
-    //                 return +safeValue as powerbiApi.PrimitiveValue;
-    //             }
-    //         }
-    //         return safeValue as powerbiApi.PrimitiveValue;
-    //     } 
-    // }, [sanitize, defaultDompurifyConfig]);
+    const onOpenUrl = React.useCallback((url) => {
+        host.launchUrl(url);
+    }, [host]);
 
     if (!option) {
         return (<p>Loading...</p>)
@@ -92,6 +76,7 @@ const ApplicationContainer: React.ForwardRefRenderFunction<ApplicationPropsRef, 
                 height={option.viewport.height}
                 width={option.viewport.width}
                 onSave={persistProperty}
+                onOpenUrl={onOpenUrl}
             />
         );
     } else {

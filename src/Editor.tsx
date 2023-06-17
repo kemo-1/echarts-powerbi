@@ -18,16 +18,15 @@ export interface EditorProps {
     height: number;
     echartJson?: string;
     dataset: echarts.EChartOption.Dataset | echarts.EChartOption.Dataset[];
-    onSave: (echartJson: string) => void; 
+    onSave: (echartJson: string) => void;
+    onOpenUrl: (url: string) => void;
 }
 
 /* eslint-disable max-lines-per-function */
-export const Editor: React.FC<EditorProps> = ({ height, width, echartJson, dataset, onSave }) => {
+export const Editor: React.FC<EditorProps> = ({ height, width, echartJson, dataset, onSave, onOpenUrl }) => {
 
     const [previewMode, setPreviewMode] = React.useState<boolean>(false);
 
-    const mainDiv = React.useRef<HTMLDivElement>();
-    const chart = React.useRef<echarts.EChartsType>();
     const editorDiv = React.useRef<HTMLDivElement>();
     const editor = React.useRef<ace.Editor>();
 
@@ -60,6 +59,17 @@ export const Editor: React.FC<EditorProps> = ({ height, width, echartJson, datas
                 const json = toJson(echartJson);
                 // optimize
                 value = JSON.parse(json);
+                
+                if (theFirstRow) {
+                    value.dataset = {
+                        source: [theFirstRow]
+                    }
+                }
+                if (ds.dimensions) {
+                    value.dataset = {
+                        dimensions: ds.dimensions
+                    }
+                }
                 value = JSON.stringify(value, null, ' ');
             } catch(e) {
                 value = echartJson;
@@ -71,12 +81,12 @@ export const Editor: React.FC<EditorProps> = ({ height, width, echartJson, datas
             editor.current.setOptions({
                 enableBasicAutocompletion: true,
                 enableSnippets: true,
-                enableLiveAutocompletion: true
+                enableLiveAutocompletion: true,
             });
 
             editor.current.commands.addCommand({
-                name: 'save', // название команды
-                bindKey: {win: 'Ctrl-S',  mac: 'Command-S'}, // вызов на PC и Mac
+                name: 'save',
+                bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
                 exec: function(editor) {
                     const value = editor.getValue()
                     onSave(value);
@@ -86,8 +96,8 @@ export const Editor: React.FC<EditorProps> = ({ height, width, echartJson, datas
                 readOnly: false
             });
             editor.current.commands.addCommand({
-                name: 'preview', // название команды
-                bindKey: {win: 'Ctrl-P',  mac: 'Command-P'}, // вызов на PC и Mac
+                name: 'preview',
+                bindKey: {win: 'Ctrl-P',  mac: 'Command-P'},
                 exec: function( ) {
                     setPreviewMode(true);
                 },
@@ -99,6 +109,12 @@ export const Editor: React.FC<EditorProps> = ({ height, width, echartJson, datas
         }
     }, []);
 
+    const onOpenDocs = React.useCallback((e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onOpenUrl((e.target as HTMLAnchorElement).href);
+    }, [onOpenUrl]);
+
     const onSaveButtonClick = React.useCallback(() => {
         if (!editor.current) {
             return;
@@ -106,7 +122,7 @@ export const Editor: React.FC<EditorProps> = ({ height, width, echartJson, datas
         let value = editor.current.getValue();
 
         try {
-            const json = toJson(echartJson);
+            const json = toJson(value);
             // optimize
             const chart = JSON.parse(json);
             const ds = getTheFirstDataset(dataset);
@@ -139,6 +155,11 @@ export const Editor: React.FC<EditorProps> = ({ height, width, echartJson, datas
                     <button onClick={onChangeView}>
                         {previewMode ? 'Editor' : 'Preview'}
                     </button>
+                    <a
+                        className="docs"
+                        href="https://echarts.apache.org/en/option.html#title"
+                        onClick={onOpenDocs}
+                    >E-Charts docs</a>
                 </div>
                 <div
                     ref={editorDiv}

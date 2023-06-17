@@ -17,7 +17,9 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
 
     const mainDiv = React.useRef<HTMLDivElement>();
     const chart = React.useRef<echarts.EChartsType>();
-    const echart = React.useRef<echarts.EChartOption>({}); 
+    const echart = React.useRef<echarts.EChartOption>({});
+    
+    const [error, setError] = React.useState<string>(null);
 
     // Parse chart options
     React.useEffect(() => {
@@ -27,6 +29,7 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
             // echart = toJs(echartJSON);
             echart.current.dataset = dataset;
         } catch(e) {
+            setError(e.message);
             console.error(e);
             echart.current = {};
         }
@@ -34,10 +37,17 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
 
     // Create the echarts instance
     React.useEffect(() => {
-        chart.current = echarts.init(mainDiv.current, null, {
-            height,
-            width,
-        });
+        try {
+            chart.current = echarts.init(mainDiv.current, null, {
+                height,
+                width,
+            });
+        }
+        catch(e) {
+            setError(e.message);
+            console.error(e);
+            echart.current = {};
+        }
 
         return () => {
             chart.current.dispose();
@@ -46,7 +56,12 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
 
     // Draw the chart
     React.useEffect(() => {
-        chart.current.setOption(echart.current);
+        try {
+            chart.current.setOption(echart.current);
+        } catch (e) {
+            setError(e.message);
+            console.log('parse error', e);
+        }
         console.log('options', echart.current);
     }, [echart, chart]);
 
@@ -60,14 +75,23 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
 
     return (
         <>
-            <div
-                ref={mainDiv}
-                id="main"
-                style={{
-                    height: `${height}px`,
-                    width: `${width}px`,
-                }}
-            ></div>
+            {error ? (
+            <>
+                <p>{error}</p>
+            </>
+            ) : (
+            <>
+                <div
+                    ref={mainDiv}
+                    id="main"
+                    style={{
+                        height: `${height}px`,
+                        width: `${width}px`,
+                    }}
+                ></div>
+            </>
+            )}
+            
         </>
     );
 };
