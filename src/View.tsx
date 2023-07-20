@@ -33,7 +33,7 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
             console.error(e);
             echart.current = {};
         }
-    }, [echartJSON]);
+    }, [echartJSON, dataset]);
 
     // Create the echarts instance
     React.useEffect(() => {
@@ -63,7 +63,7 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
             console.log('parse error', e);
         }
         console.log('options', echart.current);
-    }, [echart, chart]);
+    }, [echart, chart, dataset]);
 
     // handle resize
     React.useEffect(() => {

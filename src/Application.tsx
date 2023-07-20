@@ -6,7 +6,6 @@ import VisualUpdateOptions = powerbiApi.extensibility.visual.VisualUpdateOptions
 
 import { VisualSettings } from './settings';
 import { Viewer } from './View';
-import { Editor } from './Editor';
 import { Tutorial } from './Tutorial';
 import { Mapping } from './Mapping';
 
@@ -37,6 +36,7 @@ const ApplicationContainer: React.ForwardRefRenderFunction<ApplicationPropsRef, 
     }));
 
     const dataView = option?.dataViews[0];
+    debugger;
 
     const dataset = createDataset(dataView);
     const chartColumns = getChartColumns(settings?.chart.schema);
@@ -66,54 +66,40 @@ const ApplicationContainer: React.ForwardRefRenderFunction<ApplicationPropsRef, 
         return (<p>Loading...</p>)
     }
 
-    if (option && settings && option.editMode === powerbiApi.EditMode.Advanced) {
-        host.tooltipService.hide({immediately: true, isTouchEvent: false});
-        host.licenseManager.clearLicenseNotification();
+    if (option && unmappedColumns.length) {
         return (
-            <Editor
-                echartJson={settings.chart.schema}
-                dataset={dataset}
+            <Mapping
                 height={option.viewport.height}
                 width={option.viewport.width}
-                onSave={persistProperty}
-                onOpenUrl={onOpenUrl}
+                dataView={dataView}
+                dataset={dataset}
+                unmappedColumns={unmappedColumns}
+                onSaveMapping={persistProperty}
             />
-        );
+        )
     } else {
-        if (option && unmappedColumns.length) {
+        const categorical = dataView?.categorical;
+        if (!dataView && !categorical || settings && settings.chart.schema === '{}') {
             return (
-                <Mapping
+                <Tutorial
                     height={option.viewport.height}
                     width={option.viewport.width}
-                    dataView={dataView}
                     dataset={dataset}
-                    unmappedColumns={unmappedColumns}
                 />
             )
-        } else {
-            const categorical = dataView?.categorical;
-            if (!dataView && !categorical || settings && settings.chart.schema === '{}') {
-                return (
-                    <Tutorial
+        }
+
+        if (settings) {
+            return (
+                <>
+                    <Viewer
+                        dataset={dataset}
                         height={option.viewport.height}
                         width={option.viewport.width}
-                        dataset={dataset}
+                        echartJSON={settings.chart.schema}
                     />
-                )
-            }
-
-            if (settings) {
-                return (
-                    <>
-                        <Viewer
-                            dataset={dataset}
-                            height={option.viewport.height}
-                            width={option.viewport.width}
-                            echartJSON={settings.chart.schema}
-                        />
-                    </>
-                );
-            }
+                </>
+            );
         }
     }
 }

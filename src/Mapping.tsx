@@ -11,6 +11,7 @@ export interface MappingProps {
     dataset: echarts.EChartOption.Dataset | echarts.EChartOption.Dataset[] | null;
     dataView: DataView;
     unmappedColumns: string[];
+    onSaveMapping: (value: string) => void;
 }
 
 /* eslint-disable max-lines-per-function */

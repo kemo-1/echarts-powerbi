@@ -101,8 +101,8 @@ export function walk(key: string, tree: Record<string, unknown | unknown[]> | un
 export function verifyColumns(echartJson: any | undefined, chartColumns: string[], visualColumns: powerbiVisualsApi.DataViewMetadataColumn[]) {
     // TODO walk through tree to find encode
     const unmappedColumns = [];
-    debugger;
     if (echartJson && echartJson !== "{}") {
+        echartJson = JSON.parse(echartJson);
         walk(null, echartJson, (key: string, value: any) => {
             if (key === 'encode') {
                 const columnMapped = visualColumns.find(vc => vc.displayName === value);
@@ -122,17 +122,18 @@ export function verifyColumnsByType(options: EChartOption<Series>, visualColumns
 
     const unmappedColumns: string[] = [];
 
-    options.series.forEach(series => {
-        if (series.type === 'line') {
-            const line: LineSeriesOption = (series as LineSeriesOption);
-            if (line.encode['x']) {
-                if (visualColumns.find(vc => vc.displayName === line.encode['x'])) {
-                    unmappedColumns.push(line.encode['x'] as string);
-                }
-            } 
-        }
-    });
-
+    if (options.series) {
+        options.series.forEach(series => {
+            if (series.type === 'line') {
+                const line: LineSeriesOption = (series as LineSeriesOption);
+                if (line.encode['x']) {
+                    if (visualColumns.find(vc => vc.displayName === line.encode['x'])) {
+                        unmappedColumns.push(line.encode['x'] as string);
+                    }
+                } 
+            }
+        });
+    }
 }
 
 
