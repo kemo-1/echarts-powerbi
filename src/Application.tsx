@@ -36,7 +36,6 @@ const ApplicationContainer: React.ForwardRefRenderFunction<ApplicationPropsRef, 
     }));
 
     const dataView = option?.dataViews[0];
-    debugger;
 
     const dataset = createDataset(dataView);
     const chartColumns = getChartColumns(settings?.chart.schema);
@@ -56,10 +55,6 @@ const ApplicationContainer: React.ForwardRefRenderFunction<ApplicationPropsRef, 
                 instance
             ]
         });
-    }, [host]);
-
-    const onOpenUrl = React.useCallback((url) => {
-        host.launchUrl(url);
     }, [host]);
 
     if (!option) {

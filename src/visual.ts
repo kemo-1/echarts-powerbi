@@ -5,7 +5,6 @@ import reactDom from 'react-dom';
 import { Application } from './Application';
 
 import "../style/visual.scss";
-// import "core-js/stable";
 import powerbiVisualsApi from "powerbi-visuals-api";
 import VisualConstructorOptions = powerbiVisualsApi.extensibility.visual.VisualConstructorOptions;
 import VisualUpdateOptions = powerbiVisualsApi.extensibility.visual.VisualUpdateOptions;
@@ -14,7 +13,6 @@ import EnumerateVisualObjectInstancesOptions = powerbiVisualsApi.EnumerateVisual
 import VisualObjectInstance = powerbiVisualsApi.VisualObjectInstance;
 import DataView = powerbiVisualsApi.DataView;
 import VisualObjectInstanceEnumerationObject = powerbiVisualsApi.VisualObjectInstanceEnumerationObject;
-// import VisualDataChangeOperationKind = powerbiVisualsApi.VisualDataChangeOperationKind;
 import IVisualHost = powerbiVisualsApi.extensibility.visual.IVisualHost
 
 import { VisualSettings } from "./settings";
