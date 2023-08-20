@@ -1,3 +1,7 @@
+* {
+    margin: 0px;
+}
+
 .toolbar {
     margin-bottom: 2px;
     button {
@@ -12,4 +16,31 @@
 
 .docs {
     font-size: 12px;
+}
+
+.errorView {
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    align-content: start;
+
+    height: 100%;
+
+    .errorHeader {
+        margin: 5px;
+    }
+
+    .error {
+        margin: 10px;
+    }
+
+    .jsonHeader {
+        margin: 5px;
+    }
+
+    .json {
+        margin: 10px;
+        user-select: auto;
+    }
 }

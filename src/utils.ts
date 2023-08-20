@@ -2,7 +2,6 @@ import powerbiVisualsApi from "powerbi-visuals-api";
 
 
 import { Config as DompurifyConfig } from "dompurify";
-import { toJson } from 'really-relaxed-json';
 import { EChartOption, LineSeriesOption } from "echarts";
 
 import Series = EChartOption.Series;
@@ -15,12 +14,24 @@ export const defaultDompurifyConfig = <DompurifyConfig>{
     ALLOWED_ATTR: []
 };
 
+export function safeParse(echartJson: string): any {
+    let chart: any = {};
+
+    try {
+        chart = echartJson ? JSON.parse(echartJson) : {};
+    } catch(e) {
+        console.log(e.message);
+    }
+
+    return chart;
+}
+
 export function getChartColumns(echartJson: string) {
     if (!echartJson) {
         return [];
     }
-    const json = toJson(echartJson);
-    const chart = JSON.parse(json);
+    const chart = safeParse(echartJson);
+
     if (chart.dataset) {
         if (chart.dataset.dimensions && chart.dataset.dimensions instanceof Array) {
             const columns = [];
@@ -98,11 +109,11 @@ export function walk(key: string, tree: Record<string, unknown | unknown[]> | un
     }
 }
 
-export function verifyColumns(echartJson: any | undefined, chartColumns: string[], visualColumns: powerbiVisualsApi.DataViewMetadataColumn[]) {
+export function verifyColumns(echartJson: string | undefined, chartColumns: string[], visualColumns: powerbiVisualsApi.DataViewMetadataColumn[]) {
     // TODO walk through tree to find encode
     const unmappedColumns = [];
     if (echartJson && echartJson !== "{}") {
-        echartJson = JSON.parse(echartJson);
+        echartJson = safeParse(echartJson);
         walk(null, echartJson, (key: string, value: any) => {
             if (key === 'encode') {
                 const columnMapped = visualColumns.find(vc => vc.displayName === value);

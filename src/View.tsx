@@ -2,7 +2,7 @@ import React from "react";
 
 import * as echarts from "echarts";
 
-import { toJson, toJs } from 'really-relaxed-json';
+import { ErrorViewer } from "./Error";
 
 export interface ViewerProps {
     width: number;
@@ -24,9 +24,7 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
     // Parse chart options
     React.useEffect(() => {
         try {
-            const json = toJson(echartJSON);
-            echart.current = JSON.parse(json);
-            // echart = toJs(echartJSON);
+            echart.current = JSON.parse(echartJSON);
             echart.current.dataset = dataset;
         } catch(e) {
             setError(e.message);
@@ -41,6 +39,15 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
             chart.current = echarts.init(mainDiv.current, null, {
                 height,
                 width,
+            });
+
+            chart.current.on("click", (params) => {
+                console.log('click', params, dataset);
+
+            });
+
+            chart.current.on("mouseover", (params) => {
+                console.log('mouseover', params, dataset);
             });
         }
         catch(e) {
@@ -77,7 +84,7 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
         <>
             {error ? (
             <>
-                <p>{error}</p>
+                <ErrorViewer error={error} height={height} width={width} json={echartJSON}/>
             </>
             ) : (
             <>
