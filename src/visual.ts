@@ -17,17 +17,17 @@ import IVisualHost = powerbiVisualsApi.extensibility.visual.IVisualHost
 
 import { VisualSettings } from "./settings";
 
+import { Provider } from 'react-redux';
+import { store } from "./redux/store";
+import { setHost, setOptions, setSettings } from './redux/slice';
+
+
 export class Visual implements IVisual {
     private target: HTMLElement;
     private settings: VisualSettings;
     private host: IVisualHost;
-    private currentOptions: VisualUpdateOptions;
 
     private fetchIsDone: boolean = false; 
-
-    private appliccationRef: React.RefObject<{
-        setOptions: (options: VisualUpdateOptions, settings: VisualSettings) => void;
-    }>;
 
     constructor(options: VisualConstructorOptions) {
         this.target = options.element;
@@ -40,22 +40,28 @@ export class Visual implements IVisual {
             return window;
         };
 
+        store.dispatch(setHost(options.host));
+
         if (document) {
-            this.appliccationRef = React.createRef<{
-                setOptions: ((options: VisualUpdateOptions) => void) | null
-            } >();
-            reactDom.render(React.createElement(Application, {
-                ref: this.appliccationRef,
-                host: options.host
-            }), this.target);
+            const reactApplication = React.createElement(Application, {
+                key: "root",
+            });
+            const provider = React.createElement(Provider, {
+                store: store,
+                key: 'provider',
+                children: []
+            }, [
+                reactApplication
+            ])
+            reactDom.render(provider, this.target);
         }
     }
 
     public update(options: VisualUpdateOptions) {
-        this.currentOptions = options;
         const dataView = options && options.dataViews && options.dataViews[0];
         this.settings = Visual.parseSettings(dataView);
-        this.appliccationRef.current?.setOptions(options, this.settings);
+        store.dispatch(setSettings(this.settings));
+        store.dispatch(setOptions(options));
     }
 
     private static parseSettings(dataView: DataView): VisualSettings {

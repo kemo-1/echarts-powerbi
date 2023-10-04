@@ -1,80 +1,90 @@
 import React from 'react';
 
 import powerbiApi from "powerbi-visuals-api";
-import VisualUpdateOptions = powerbiApi.extensibility.visual.VisualUpdateOptions;
 
-
-import { VisualSettings } from './settings';
 import { Viewer } from './View';
 import { Tutorial } from './Tutorial';
 import { Mapping } from './Mapping';
+import { QuickChart } from './QuickChart';
 
-// import { strings } from './strings';
-// import { sanitize } from "dompurify";
+import { useAppSelector, useAppDispatch } from './redux/hooks';
+import { setSettings } from './redux/slice';
+import { IVisualSettings } from './settings';
+import { applyMapping } from './utils';
 
-import { createDataset, verifyColumns, getChartColumns } from "./utils";
-
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ApplicationProps {
-    host: powerbiApi.extensibility.visual.IVisualHost
-}
-
-export interface ApplicationPropsRef {
-    setOptions: (option: VisualUpdateOptions, settings: VisualSettings) => void;
 }
 
 /* eslint-disable max-lines-per-function */
-const ApplicationContainer: React.ForwardRefRenderFunction<ApplicationPropsRef, ApplicationProps> = ({host}: ApplicationProps, ref: React.ForwardedRef<ApplicationPropsRef>) => {
+export const Application: React.FC<ApplicationProps> = () => {
 
-    const [option, setOptions] = React.useState<VisualUpdateOptions>(null);
-    const [settings, setSettings] = React.useState<VisualSettings>(null);
+    const settings = useAppSelector((state) => state.options.settings);
+    const option = useAppSelector((state) => state.options.options);
+    const host = useAppSelector((state) => state.options.host);
 
-    React.useImperativeHandle(ref, () => ({
-        setOptions: (option: VisualUpdateOptions, settings: VisualSettings) => {
-            setOptions(option);
-            setSettings(settings);
-        }
-    }));
+    const dataView = useAppSelector((state) => state.options.dataView);
+    const dataset = useAppSelector((state) => state.options.dataset);
+    const unmappedColumns = useAppSelector((state) => state.options.unmappedColumns);
 
-    const dataView = option?.dataViews[0];
-
-    const dataset = createDataset(dataView);
-    const chartColumns = getChartColumns(settings?.chart.schema);
-    const unmappedColumns = chartColumns && dataView?.metadata.columns ? verifyColumns(settings?.chart?.schema ,chartColumns, dataView?.metadata.columns) : [];
+    const dispatch = useAppDispatch();
 
     const persistProperty = React.useCallback((json_string: string) => {
         const instance: powerbiApi.VisualObjectInstance = {
             objectName: "chart",
             selector: undefined,
             properties: {
-                schema: json_string
+                echart: json_string
             }
         };
 
         host.persistProperties({
-            merge: [
+            replace: [
                 instance
             ]
         });
     }, [host]);
 
-    if (!option) {
-        return (<p>Loading...</p>)
+    if (!option || !settings || !dataView) {
+        return (<h1>Loading...</h1>)
+    }
+
+    if (option.editMode === powerbiApi.EditMode.Advanced ||
+        (settings.chart.echart === '{}' && dataView && dataset)) {
+        return (
+            <QuickChart
+                dataset={dataset}
+                height={option.viewport.height}
+                width={option.viewport.width}
+                dataView={dataView}
+                onSave={(json) => {
+                    persistProperty(json);
+                    const newSettings: IVisualSettings = JSON.parse(JSON.stringify(settings));
+                    newSettings.chart.echart = json;
+                    dispatch(setSettings(newSettings));
+                }}
+            />
+        );
     }
 
     if (option && unmappedColumns.length) {
         return (
             <Mapping
-                height={option.viewport.height}
-                width={option.viewport.width}
                 dataView={dataView}
                 dataset={dataset}
                 unmappedColumns={unmappedColumns}
-                onSaveMapping={persistProperty}
+                onSaveMapping={(mapping) => {
+                    const mappedJSON = applyMapping(settings.chart.echart, mapping, dataset);
+                    persistProperty(mappedJSON);
+                    const newSettings: IVisualSettings = JSON.parse(JSON.stringify(settings));
+                    newSettings.chart.echart = mappedJSON;
+                    dispatch(setSettings(newSettings));
+                }}
             />
         )
     } else {
         const categorical = dataView?.categorical;
-        if (!dataView && !categorical || settings && settings.chart.schema === '{}') {
+        if (!dataView && !categorical || settings && settings.chart.echart === '{}') {
             return (
                 <Tutorial
                     height={option.viewport.height}
@@ -91,12 +101,10 @@ const ApplicationContainer: React.ForwardRefRenderFunction<ApplicationPropsRef, 
                         dataset={dataset}
                         height={option.viewport.height}
                         width={option.viewport.width}
-                        echartJSON={settings.chart.schema}
+                        echartJSON={settings.chart.echart}
                     />
                 </>
             );
         }
     }
 }
-
-export const Application = React.forwardRef(ApplicationContainer);

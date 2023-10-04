@@ -13,7 +13,7 @@
             "displayName": "Chart",
             "displayNameKey": "Visual_Chart",
             "properties": {
-                "schema": {
+                "echart": {
                     "description": "Chart schema",
                     "descriptionKey": "Visual_ChartSchema",
                     "displayName": "Chart schema",
@@ -112,22 +112,8 @@
     },
     "dataViewMappings": [
         {
-            "categorical": {
-                "categories": {
-                    "select": [
-                        {
-                            "bind": {
-                                "to": "data"
-                            }
-                        }
-                    ],
-                    "dataReductionAlgorithm": {
-                        "window": {
-                            "count": 30000
-                        }
-                    }
-                },
-                "values": {
+            "table": {
+                "rows": {
                     "select": [
                         {
                             "bind": {
@@ -140,8 +126,8 @@
         }
     ],
     "advancedEditModeSupport": 2,
-    "supportsHighlight": true,
-    "supportsLandingPage": true,
+    "supportsHighlight": false,
+    "supportsLandingPage": false,
     "sorting": {
         "default": {}
     },
