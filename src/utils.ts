@@ -123,22 +123,26 @@ export function createDataset(dataView: powerbiVisualsApi.DataView | null) {
     return dataSources;
 }
 
-export function walk(key: string, tree: Record<string, unknown | unknown[]> | unknown, apply: (key: string, value: any) => void) {
+export function walk(
+    key: string,
+    tree: Record<string, unknown | unknown[]> | unknown,
+    apply: (key: string, value: any, parent: Record<string, any>, tail: string) => void,
+    tail: string = null) {
     if (typeof tree !== 'object') {
-        apply(key, tree);
+        apply(key, tree, null, tail);
         return;
     }
     for (const key in tree) {
         if (tree[key] instanceof Array) {
             const array = tree[key] as Array<unknown>;
             array.forEach((el, index) => {
-                apply(index.toString(), el);
-                walk(index.toString(), el, apply);
+                apply(index.toString(), el, array, tail);
+                walk(index.toString(), el, apply, tail + `[${index}]` + '.' + key);
             });
         } else {
-            apply(key, tree[key]);
+            apply(key, tree[key], tree, tail);
             if (tree[key] instanceof Object) {
-                walk(key, tree[key], apply);
+                walk(key, tree[key], apply, tail + '.' + key);
             }
         }
         
@@ -149,13 +153,19 @@ export function applyMapping(echartJson: string | undefined, mapping: Record<str
     const echart = safeParse(echartJson);
     
     if (echartJson && echartJson !== "{}") {
-        walk(null, echart, (key: string, value: any) => {
+        walk(null, echart, (key: string, value: any, parent: Record<string, any>, tail: string) => {
             if (key === 'encode') {
                 Object.keys(value).forEach(attr => {
                     value[attr] = mapping[attr];
                 });
             }
-        })
+            if (key.endsWith('src')) {
+                const index = dataset.dimensions.indexOf(mapping[tail + "." + key]);
+                const vector = (<any[]>dataset.source).map(row => row[index]);
+                parent['value'] = vector;
+                parent[key] = mapping[tail + "." + key];
+            }
+        }, "options")
     }
     echart.dataset = {
         dimensions: dataset.dimensions
@@ -169,7 +179,8 @@ export function verifyColumns(echartJson: string | undefined, chartColumns: stri
     const unmappedColumns = [];
     if (echartJson && echartJson !== "{}") {
         echartJson = safeParse(echartJson);
-        walk(null, echartJson, (key: string, value: any) => {
+        debugger;
+        walk(null, echartJson, (key: string, value: any, parent: any, tail: string) => {
             if (key === 'encode') {
                 Object.keys(value).forEach(attr => {
                     const columnMapped = visualColumns.find(vc => vc.displayName === value[attr]);
@@ -178,7 +189,14 @@ export function verifyColumns(echartJson: string | undefined, chartColumns: stri
                     }
                 });
             }
-        })
+            if (key.endsWith('src')) {
+                debugger;
+                const columnMapped = visualColumns.find(vc => vc.displayName === value);
+                if (!columnMapped) {
+                    unmappedColumns.push({[tail + "." + key]: value});
+                }
+            }
+        }, "options")
     } else {
         // chartColumns.filter(ch => visualColumns.find(vc => vc.displayName === ch) === undefined);
         // old mapping 

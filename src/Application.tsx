@@ -8,7 +8,7 @@ import { Mapping } from './Mapping';
 import { QuickChart } from './QuickChart';
 
 import { useAppSelector, useAppDispatch } from './redux/hooks';
-import { setSettings } from './redux/slice';
+import { setSettings, reVerifyColumns } from './redux/slice';
 import { IVisualSettings } from './settings';
 import { applyMapping } from './utils';
 
@@ -75,10 +75,12 @@ export const Application: React.FC<ApplicationProps> = () => {
                 unmappedColumns={unmappedColumns}
                 onSaveMapping={(mapping) => {
                     const mappedJSON = applyMapping(settings.chart.echart, mapping, dataset);
-                    persistProperty(mappedJSON);
                     const newSettings: IVisualSettings = JSON.parse(JSON.stringify(settings));
                     newSettings.chart.echart = mappedJSON;
                     dispatch(setSettings(newSettings));
+                    dispatch(reVerifyColumns());
+                    debugger;
+                    persistProperty(mappedJSON);
                 }}
             />
         )

@@ -42,15 +42,18 @@ export const slice = createSlice({
             state.dataView = state.options.dataViews[0];
             state.dataset = createDataset(state.dataView);
             const chartColumns = getChartColumns(state.settings.chart.echart);
-            state.unmappedColumns = chartColumns && state.dataView.metadata.columns ? verifyColumns(state.settings.chart.echart ,chartColumns, state.dataView.metadata.columns) : [];
+            state.unmappedColumns = chartColumns && state.dataView.metadata.columns ? verifyColumns(state.settings.chart.echart, chartColumns, state.dataView.metadata.columns) : [];
         },
         setSettings: (state, action: PayloadAction<IVisualSettings>) => {
             state.settings = action.payload;
-        }  
+        },
+        reVerifyColumns: (state) => {
+            state.unmappedColumns = verifyColumns(state.settings.chart.echart, getChartColumns(state.settings.chart.echart), state.dataView.metadata.columns);
+        }
     },
 })
 
 // Action creators are generated for each case reducer function
-export const { setHost, setOptions, setSettings } = slice.actions
+export const { setHost, setOptions, setSettings, reVerifyColumns } = slice.actions
 
 export default slice.reducer
