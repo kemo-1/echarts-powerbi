@@ -1,4 +1,6 @@
+/* eslint-disable max-lines-per-function */
 import React from "react";
+import Handlebars from "handlebars";
 
 import * as echarts from "echarts";
 
@@ -13,6 +15,10 @@ import { Mapping } from "./Mapping";
 import { Viewer } from "./View";
 
 import { schemas } from './charts';
+import { hardReset } from "./handlebars/helpers";
+import { useAppSelector } from "./redux/hooks";
+
+import "./handlebars/helpers";
 
 const { Header, Content, Sider, Footer } = Layout;
 
@@ -86,7 +92,8 @@ export interface QuickChartProps {
 export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: visualDataset, dataView, onSave }) => {
 
     const [error, setError] = React.useState<string>(null);
-    const [schema, setSchema] = React.useState<string>(schemas['Basic Line Chart']);
+    const [schema, setSchema] = React.useState<string>(JSON.stringify(schemas['Basic Line Chart']));
+    const host = useAppSelector((state) => state.options.host);
 
     const chartGroups: MenuProps['items'] = Object.keys(chartTree).map(
         (group) => {
@@ -114,12 +121,52 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
     const mappingIsCorrect = verifyColumns(schema, chartColumns, dataView.metadata.columns).length === 0;
 
     const dataset = mappingIsCorrect ? visualDataset : JSON.parse(schema).dataset;
+    const table = useAppSelector((state) => state.options.table);
+    const viewport = useAppSelector((state) => state.options.viewport);
+
+    const template = React.useMemo(() => {
+        let charttmpl = schema
+        charttmpl = charttmpl.replaceAll('"{{{', " {{{ ")
+        charttmpl = charttmpl.replaceAll('}}}"', " }}} ")
+        console.log('charttmpl quick chart', charttmpl);
+        return Handlebars.compile(charttmpl);
+    }, [schema])
+
+    const content = React.useMemo(() => {
+        debugger;
+        hardReset()
+        Handlebars.unregisterHelper('useColor')
+        Handlebars.registerHelper('useColor', function (val: string) {
+            return host.colorPalette.getColor(val).value
+        })
+        Handlebars.unregisterHelper('useSelection')
+        Handlebars.registerHelper('useSelection', function (index: number) {
+            if (table[index] && typeof index === 'number') {
+                return `data-selection=true data-index="${index}"`
+            }
+        })
+        Handlebars.unregisterHelper('useSelectionClear')
+        Handlebars.registerHelper('useSelectionClear', function () {
+            return `data-selection-clear="true"`
+        })
+        try {
+            return template({
+                table,
+                dataset,
+                viewport
+            })
+        } catch (err) {
+            return `<h4>${err.message}</h4><pre>${err.stack}</pre>`
+        }
+    }, [host, table, viewport, template])
+
+    console.log('quick chart content', content);
 
     return (
         <>
             {error ? (
                 <>
-                    <ErrorViewer error={error} height={height} width={width} json={schema} />
+                    <ErrorViewer error={error} height={height} width={width} json={content} />
                 </>
             ) : (
                 <>
@@ -138,7 +185,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                 items={chartGroups}
                                 onClick={(info) => {
                                     if (schemas[info.key]) {
-                                        setSchema(schemas[info.key]);
+                                        setSchema(JSON.stringify(schemas[info.key], null, " "));
                                     }
                                 }}
                             />
@@ -157,7 +204,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                     dataset={dataset}
                                     height={height * (2/3)}
                                     width={width - 300}
-                                    echartJSON={schema}
+                                    echartJSON={content}
                                 />
                                 {unmappedColumns.length ? (<>
                                     <h4>Mapping</h4>

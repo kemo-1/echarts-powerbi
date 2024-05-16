@@ -1,10 +1,27 @@
 import powerbiVisualsApi from "powerbi-visuals-api";
+import DataView = powerbiVisualsApi.DataView;
+import IVisualHost = powerbiVisualsApi.extensibility.visual.IVisualHost;
+import DataViewMetadataColumn = powerbiVisualsApi.DataViewMetadataColumn;
+import PrimitiveValue = powerbiVisualsApi.PrimitiveValue;
+import ISelectionId = powerbiVisualsApi.visuals.ISelectionId;
 
-
-import { Config as DompurifyConfig } from "dompurify";
+import { Config as DompurifyConfig, sanitize } from "dompurify";
 import { EChartOption, LineSeriesOption } from "echarts";
+import { utcParse } from "d3-time-format";
 
 import Series = EChartOption.Series;
+
+export type Column = Pick<DataViewMetadataColumn, "displayName" | "index">;
+
+export interface Row {
+    [key: string]: PrimitiveValue | ISelectionId
+    selection?: ISelectionId
+}
+
+export interface Table {
+    rows: Row[];
+    columns: Column[];
+}
 
 export const defaultDompurifyConfig = <DompurifyConfig>{
     SANITIZE_DOM: true,
@@ -13,6 +30,10 @@ export const defaultDompurifyConfig = <DompurifyConfig>{
     ALLOWED_TAGS: ['b', 'sup', 'sub', 'br', 'i'],
     ALLOWED_ATTR: []
 };
+
+export function sanitizeHTML(dirty: string) {
+    return sanitize(dirty, defaultDompurifyConfig) as string;
+}
 
 export function safeParse(echartJson: string): any {
     let chart: any = {};
@@ -51,6 +72,45 @@ export function getChartColumns(echartJson: string): string[] {
     }
 
     return [];
+}
+
+export function convertData(dataView: DataView, host?: IVisualHost): Table {
+    const table: Table = {
+        rows: [],
+        columns: []
+    };
+
+    if (!dataView || !dataView.table) {
+        return table
+    }
+
+    const dateParse = utcParse('%Y-%m-%dT%H:%M:%S.%LZ');
+    dataView.table.rows.forEach((data, rowIndex) => {
+        const selection = host
+            ?.createSelectionIdBuilder()
+            .withTable(dataView.table, rowIndex)
+            .createSelectionId();
+        
+        const row = {
+            selection
+        };
+        dataView.table.columns.forEach((col, index) => {
+            if (col.type.dateTime || col.type.temporal) {
+                row[col.displayName] = dateParse(data[index] as string);
+            } else {
+                row[col.displayName] = data[index];
+            }
+        })
+
+        table.rows.push(row)
+    })
+
+    table.columns = dataView.table.columns.map(c => ({
+        displayName: c.displayName,
+        index: c.index
+    }))
+
+    return table;
 }
 
 export function createDataset(dataView: powerbiVisualsApi.DataView | null) {
@@ -179,7 +239,6 @@ export function verifyColumns(echartJson: string | undefined, chartColumns: stri
     const unmappedColumns = [];
     if (echartJson && echartJson !== "{}") {
         echartJson = safeParse(echartJson);
-        debugger;
         walk(null, echartJson, (key: string, value: any, parent: any, tail: string) => {
             if (key === 'encode') {
                 Object.keys(value).forEach(attr => {
@@ -190,7 +249,6 @@ export function verifyColumns(echartJson: string | undefined, chartColumns: stri
                 });
             }
             if (key.endsWith('src')) {
-                debugger;
                 const columnMapped = visualColumns.find(vc => vc.displayName === value);
                 if (!columnMapped) {
                     unmappedColumns.push({[tail + "." + key]: value});

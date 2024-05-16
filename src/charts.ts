@@ -1,113 +1,163 @@
 
 
 export const schemas = {
-    "Basic Line Chart": `{
-      "dataset": {
-        "dimensions": ["Weekday", "Data"],
-        "source": [
-          ["Mon", 150],
-          ["Tue", 230],
-          ["Wed", 224],
-          ["Thu", 218],
-          ["Fri", 135],
-          ["Sat", 147],
-          ["Sun", 260]
-        ]
+  "Basic Line Chart": {
+    "dataset": {
+      "dimensions": ["Country", " Sales"],
+    },
+    xAxis: {
+      type: 'category',
+      "data": "{{{ jsonArray (map table.rows 'Country') }}}"
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        "data": "{{{ jsonArray (map table.rows ' Sales') }}}",
+        type: 'line'
+      }
+    ]
+  },
+  "Smoothed Line Chart": {
+    xAxis: {
+      type: 'category',
+      data: "{{{ jsonArray (map table.rows 'Country') }}}"
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        data: "{{{ jsonArray (map table.rows ' Sales') }}}",
+        type: 'line',
+        smooth: true
+      }
+    ]
+  },
+  "Basic area chart": {
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: "{{{jsonArray (map table.rows 'Country')}}}"
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        data: "{{{jsonArray (map table.rows ' Sales')}}}",
+        type: 'line',
+        areaStyle: {}
+      }
+    ]
+  },
+  "Stacked Line": {
+    title: {
+      text: 'Stacked Line'
+    },
+    tooltip: {
+      trigger: 'axis'
+    },
+    legend: {
+      data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine']
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    toolbox: {
+      feature: {
+        saveAsImage: {}
+      }
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: "{{{jsonArray (map table.rows 'Country')}}}"
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        name: 'Sales',
+        type: 'line',
+        stack: 'Total',
+        data: "{{{jsonArray (map table.rows ' Sales')}}}",
       },
-      "xAxis": {
-        "type": "category"
-      },
-      "yAxis": {
-        "type": "value"
-      },
-      "series": [
-        {
-          "encode": { "x": "Weekday", "y": "Data" },
-          "type": "line"
+      {
+        name: 'Gross Sales',
+        type: 'line',
+        stack: 'Total',
+        data: "{{{jsonArray (map table.rows 'Gross Sales')}}}",
+      }
+    ]
+  },
+  "Stacked Area Chart": {
+    title: {
+      text: 'Stacked Area Chart'
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross',
+        label: {
+          backgroundColor: '#6a7985'
         }
-      ]
-    }`,
-    "Smoothed Line Chart": `{
-      "dataset": {
-        "dimensions": ["Weekday", "Data"],
-        "source": [
-          ["Mon", 150],
-          ["Tue", 230],
-          ["Wed", 224],
-          ["Thu", 218],
-          ["Fri", 135],
-          ["Sat", 147],
-          ["Sun", 260]
-        ]
+      }
+    },
+    legend: {
+      data: "{{{jsonArray (map table.rows 'Country')}}}"
+    },
+    toolbox: {
+      feature: {
+        saveAsImage: {}
+      }
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: [
+      {
+        type: 'category',
+        boundaryGap: false,
+        data: "{{{jsonArray (map table.rows 'Country')}}}"
+
+      }
+    ],
+    yAxis: [
+      {
+        type: 'value'
+      }
+    ],
+    series: [
+      {
+        name: 'Sales',
+        type: 'line',
+        stack: 'Total',
+        areaStyle: {},
+        emphasis: {
+          focus: 'series'
+        },
+        data: "{{{jsonArray (map table.rows ' Sales')}}}",
       },
-      "xAxis": {
-        "type": "category"
-      },
-      "yAxis": {
-        "type": "value"
-      },
-      "series": [
-        {
-          "encode": { "x": "Weekday", "y": "Data" },
-          "type": "line",
-          "smooth": true
-        }
-      ]
-    }`,
-    "Basic area chart": `{
-      "dataset": {
-        "dimensions": ["Weekday", "Data"],
-        "source": [
-          ["Mon", 150],
-          ["Tue", 230],
-          ["Wed", 224],
-          ["Thu", 218],
-          ["Fri", 135],
-          ["Sat", 147],
-          ["Sun", 260]
-        ]
-      },
-      "xAxis": {
-        "type": "category"
-      },
-      "yAxis": {
-        "type": "value"
-      },
-      "series": [
-        {
-          "encode": { "x": "Weekday", "y": "Data" },
-          "type": "line",
-          "areaStyle": {}
-        }
-      ]
-    }`,
-    "Stacked Area Chart": `{
-      "dataset": {
-        "dimensions": ["Weekday", "Email", "Union Ads", "Video Ads", "Direct", "Search Engine"],
-        "source": [
-          ["Mon", 150, 130, 180, 170, 90],
-          ["Tue", 230, 210, 220, 230, 290],
-          ["Wed", 224, 264, 234, 274, 24],
-          ["Thu", 218, 198, 238, 208, 208],
-          ["Fri", 135, 155, 105, 175, 165],
-          ["Sat", 147, 187, 137, 117, 137],
-          ["Sun", 260, 220, 250, 266, 255]
-        ]
-      },
-      "xAxis": {
-        "type": "category"
-      },
-      "yAxis": {
-        "type": "value"
-      },
-      "series": [
-        {
-          "encode": { "x": "Weekday", "y": "Data" },
-          "type": "line",
-          "areaStyle": {},
-          "seriesLayoutBy": "column"
-        }
-      ]
-    }`,
-    "Bump Chart (Ranking)": ''
+      {
+        name: 'Gross Sales',
+        type: 'line',
+        stack: 'Total',
+        areaStyle: {},
+        emphasis: {
+          focus: 'series'
+        },
+        data: "{{{jsonArray (map table.rows 'Gross Sales')}}}",
+
+      }
+    ]
+  }
 }

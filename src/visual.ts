@@ -19,7 +19,7 @@ import { VisualSettings } from "./settings";
 
 import { Provider } from 'react-redux';
 import { store } from "./redux/store";
-import { setHost, setOptions, setSettings } from './redux/slice';
+import { setHost, setOptions, setSettings, setViewport } from './redux/slice';
 
 
 export class Visual implements IVisual {
@@ -60,8 +60,9 @@ export class Visual implements IVisual {
     public update(options: VisualUpdateOptions) {
         const dataView = options && options.dataViews && options.dataViews[0];
         this.settings = Visual.parseSettings(dataView);
+        store.dispatch(setViewport(options.viewport));
         store.dispatch(setSettings(this.settings));
-        store.dispatch(setOptions(options));
+        store.dispatch(setOptions(options)); //TODO deep copy
     }
 
     private static parseSettings(dataView: DataView): VisualSettings {
