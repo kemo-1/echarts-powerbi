@@ -25,6 +25,7 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
     // Parse chart options
     React.useEffect(() => {
         try {
+            setError(null);
             echart.current = JSON.parse(echartJSON);
             echart.current.dataset = dataset;
         } catch(e) {
@@ -32,11 +33,12 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
             console.error(e);
             echart.current = {};
         }
-    }, [echartJSON, dataset]);
+    }, [echartJSON, dataset, setError]);
 
     // Create the echarts instance
     React.useEffect(() => {
         try {
+            setError(null);
             chartInstance.current = echarts.init(mainDiv.current, null, {
                 height,
                 width,
@@ -59,7 +61,7 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
         return () => {
             chartInstance.current.dispose();
         };
-    }, [echartJSON]);
+    }, [echartJSON, setError]);
 
     // Draw the chart
     React.useEffect(() => {
@@ -69,7 +71,7 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
             setError(e.message);
             console.log('parse error', e);
         }
-    }, [echart, chartInstance, dataset, echartJSON]);
+    }, [echart, chartInstance, dataset, echartJSON, setError]);
 
     // handle resize
     React.useEffect(() => {
@@ -85,21 +87,17 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
             <>
                 <ErrorViewer error={error} height={height} width={width} json={echartJSON}/>
             </>
-            ) : (
-            <>
-                <Layout style={{backgroundColor: 'transparent'}}>
-                    <div
-                        ref={mainDiv}
-                        id="main"
-                        style={{
-                            height: `${height}px`,
-                            width: `${width}px`,
-                        }}
-                    ></div>
-                </Layout>
-            </>
-            )}
-            
+            ) : null }
+            <Layout style={{backgroundColor: 'transparent'}}>
+                <div
+                    ref={mainDiv}
+                    id="main"
+                    style={{
+                        height: `${height}px`,
+                        width: `${width}px`,
+                    }}
+                ></div>
+            </Layout>
         </>
     );
 };

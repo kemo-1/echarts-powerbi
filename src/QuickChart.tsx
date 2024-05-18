@@ -20,6 +20,12 @@ import { useAppSelector } from "./redux/hooks";
 
 import "./handlebars/helpers";
 
+import AceEditor from "react-ace";
+
+import "ace-builds/src-noconflict/mode-java";
+import "ace-builds/src-noconflict/theme-github";
+import "ace-builds/src-noconflict/ext-language_tools";
+
 const { Header, Content, Sider, Footer } = Layout;
 
 const chartTree = {
@@ -27,11 +33,10 @@ const chartTree = {
         'Basic Line Chart',
         'Smoothed Line Chart',
         'Basic area chart',
-        'Stacked Area Chart',
-        'Bump Chart (Ranking)'
+        'Stacked Area Chart'
     ],
     'Bar': [
-        'Basic Bar',
+        'Basic Bar Chart',
         'Bar with Background',
         'Axis Align with Tick',
         'Waterfall Chart',
@@ -45,13 +50,14 @@ const chartTree = {
         'Half Doughnut Chart'
     ],
     'Scatter': [
-
+        'Scatter',
+        'Clustering Process'
     ],
     'Candlestick': [
-
+        'Basic Candlestick',
     ],
     'Radar': [
-
+        'Basic Radar Chart'
     ],
     'Boxplot': [
 
@@ -92,7 +98,7 @@ export interface QuickChartProps {
 export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: visualDataset, dataView, onSave }) => {
 
     const [error, setError] = React.useState<string>(null);
-    const [schema, setSchema] = React.useState<string>(JSON.stringify(schemas['Basic Line Chart']));
+    const [schema, setSchema] = React.useState<string>(JSON.stringify(schemas['Basic Line Chart'], null, " "));
     const host = useAppSelector((state) => state.options.host);
 
     const chartGroups: MenuProps['items'] = Object.keys(chartTree).map(
@@ -133,7 +139,6 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
     }, [schema])
 
     const content = React.useMemo(() => {
-        debugger;
         hardReset()
         Handlebars.unregisterHelper('useColor')
         Handlebars.registerHelper('useColor', function (val: string) {
@@ -202,7 +207,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                 <h4>Preview</h4>
                                 <Viewer
                                     dataset={dataset}
-                                    height={height * (2/3)}
+                                    height={height * (9/10)}
                                     width={width - 300}
                                     echartJSON={content}
                                 />
@@ -218,6 +223,19 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                         }}
                                     />
                                 </>) : null}
+                                <h4>Configuration</h4>
+                                <AceEditor
+                                    width="100%"
+                                    height={`${height * (9/10)}px`}
+                                    mode="ace/mode/json"
+                                    theme="github"
+                                    onChange={(edit) => {
+                                        console.log(edit);
+                                    }}
+                                    value={schema}
+                                    name="CONFIGURATION_ID"
+                                    editorProps={{ $blockScrolling: true }}
+                                />
                             </Content>
                         </Layout>
                     </Layout>
