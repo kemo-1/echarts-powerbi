@@ -168,6 +168,12 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
         }
     }, [host, table, viewport, template])
 
+    const draft = React.useRef<string>(schema);
+
+    const onApplySchema = React.useCallback(() => {
+        setSchema(draft.current);
+    }, [setSchema]);
+
     return (
         <>
             {error ? (
@@ -231,12 +237,13 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                     mode="ace/mode/json"
                                     theme="github"
                                     onChange={(edit) => {
-                                        console.log(edit);
+                                        draft.current = edit;
                                     }}
                                     value={schema}
                                     name="CONFIGURATION_ID"
                                     editorProps={{ $blockScrolling: true }}
                                 />
+                                <Button className="apply" onClick={onApplySchema}>Apply</Button>
                             </Content>
                         </Layout>
                     </Layout>
