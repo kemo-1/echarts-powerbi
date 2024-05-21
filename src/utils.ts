@@ -66,7 +66,7 @@ export function getChartColumns(echartJson: string): string[] {
 
             return columns;
         }
-        if (chart.dataset.source[0]) {
+        if (chart.dataset && chart.dataset.source && chart.dataset.source[0]) {
             return chart.dataset.source[0];
         }
     }

@@ -7,14 +7,14 @@ export const schemas = {
     },
     xAxis: {
       type: 'category',
-      "data": "{{{ jsonArray (map table.rows 'Country') }}}"
+      "data": "{{{ column 'Country' }}}"
     },
     yAxis: {
       type: 'value'
     },
     series: [
       {
-        "data": "{{{ jsonArray (map table.rows ' Sales') }}}",
+        "data": "{{{ column ' Sales' }}}",
         type: 'line'
       }
     ]
@@ -674,7 +674,7 @@ export const schemas = {
       }
     ]
   },
-  'Radar': {
+  'Basic Radar Chart': {
     title: {
       text: 'Basic Radar Chart'
     },
@@ -774,109 +774,488 @@ export const schemas = {
       }
     ]
   },
-  '': {
+  'AQI - Radar': {
     backgroundColor: '#161627',
-  title: {
-    text: 'AQI - Radar',
-    left: 'center',
-    textStyle: {
-      color: '#eee'
-    }
-  },
-  legend: {
-    bottom: 5,
-    data: ['Beijing', 'Shanghai', 'Guangzhou'],
-    itemGap: 20,
-    textStyle: {
-      color: '#fff',
-      fontSize: 14
-    },
-    selectedMode: 'single'
-  },
-  radar: {
-    indicator: [
-      { name: 'AQI', max: 300 },
-      { name: 'PM2.5', max: 250 },
-      { name: 'PM10', max: 300 },
-      { name: 'CO', max: 5 },
-      { name: 'NO2', max: 200 },
-      { name: 'SO2', max: 100 }
-    ],
-    shape: 'circle',
-    splitNumber: 5,
-    axisName: {
-      color: 'rgb(238, 197, 102)'
-    },
-    splitLine: {
-      lineStyle: {
-        color: [
-          'rgba(238, 197, 102, 0.1)',
-          'rgba(238, 197, 102, 0.2)',
-          'rgba(238, 197, 102, 0.4)',
-          'rgba(238, 197, 102, 0.6)',
-          'rgba(238, 197, 102, 0.8)',
-          'rgba(238, 197, 102, 1)'
-        ].reverse()
+    title: {
+      text: 'AQI - Radar',
+      left: 'center',
+      textStyle: {
+        color: '#eee'
       }
     },
-    splitArea: {
-      show: false
+    legend: {
+      bottom: 5,
+      data: ['Beijing', 'Shanghai', 'Guangzhou'],
+      itemGap: 20,
+      textStyle: {
+        color: '#fff',
+        fontSize: 14
+      },
+      selectedMode: 'single'
     },
-    axisLine: {
-      lineStyle: {
-        color: 'rgba(238, 197, 102, 0.5)'
-      }
-    }
-  },
-  series: [
-    {
-      name: 'Beijing',
-      type: 'radar',
-      lineStyle: {
-        width: 1,
-        opacity: 0.5
-      },
-      data: [],
-      symbol: 'none',
-      itemStyle: {
-        color: '#F9713C'
-      },
-      areaStyle: {
-        opacity: 0.1
-      }
-    },
-    {
-      name: 'Shanghai',
-      type: 'radar',
-      lineStyle: {
-        width: 1,
-        opacity: 0.5
-      },
-      data: [],
-      symbol: 'none',
-      itemStyle: {
-        color: '#B3E4A1'
-      },
-      areaStyle: {
-        opacity: 0.05
-      }
-    },
-    {
-      name: 'Guangzhou',
-      type: 'radar',
-      lineStyle: {
-        width: 1,
-        opacity: 0.5
-      },
-      data: [],
-      symbol: 'none',
-      itemStyle: {
+    radar: {
+      indicator: [
+        { name: 'AQI', max: 300 },
+        { name: 'PM2.5', max: 250 },
+        { name: 'PM10', max: 300 },
+        { name: 'CO', max: 5 },
+        { name: 'NO2', max: 200 },
+        { name: 'SO2', max: 100 }
+      ],
+      shape: 'circle',
+      splitNumber: 5,
+      axisName: {
         color: 'rgb(238, 197, 102)'
       },
-      areaStyle: {
-        opacity: 0.05
+      splitLine: {
+        lineStyle: {
+          color: [
+            'rgba(238, 197, 102, 0.1)',
+            'rgba(238, 197, 102, 0.2)',
+            'rgba(238, 197, 102, 0.4)',
+            'rgba(238, 197, 102, 0.6)',
+            'rgba(238, 197, 102, 0.8)',
+            'rgba(238, 197, 102, 1)'
+          ].reverse()
+        }
+      },
+      splitArea: {
+        show: false
+      },
+      axisLine: {
+        lineStyle: {
+          color: 'rgba(238, 197, 102, 0.5)'
+        }
+      }
+    },
+    series: [
+      {
+        name: 'Beijing',
+        type: 'radar',
+        lineStyle: {
+          width: 1,
+          opacity: 0.5
+        },
+        data: [],
+        symbol: 'none',
+        itemStyle: {
+          color: '#F9713C'
+        },
+        areaStyle: {
+          opacity: 0.1
+        }
+      },
+      {
+        name: 'Shanghai',
+        type: 'radar',
+        lineStyle: {
+          width: 1,
+          opacity: 0.5
+        },
+        data: [],
+        symbol: 'none',
+        itemStyle: {
+          color: '#B3E4A1'
+        },
+        areaStyle: {
+          opacity: 0.05
+        }
+      },
+      {
+        name: 'Guangzhou',
+        type: 'radar',
+        lineStyle: {
+          width: 1,
+          opacity: 0.5
+        },
+        data: [],
+        symbol: 'none',
+        itemStyle: {
+          color: 'rgb(238, 197, 102)'
+        },
+        areaStyle: {
+          opacity: 0.05
+        }
+      }
+    ]
+  },
+  'Basic Boxplot': {
+    title: [
+      {
+        text: 'Michelson-Morley Experiment',
+        left: 'center'
+      },
+      {
+        text: 'upper: Q3 + 1.5 * IQR \nlower: Q1 - 1.5 * IQR',
+        borderColor: '#999',
+        borderWidth: 1,
+        textStyle: {
+          fontWeight: 'normal',
+          fontSize: 14,
+          lineHeight: 20
+        },
+        left: '10%',
+        top: '90%'
+      }
+    ],
+    dataset: [
+      {
+        // prettier-ignore
+        source: [
+          [850, 740, 900, 1070, 930, 850, 950, 980, 980, 880, 1000, 980, 930, 650, 760, 810, 1000, 1000, 960, 960],
+          [960, 940, 960, 940, 880, 800, 850, 880, 900, 840, 830, 790, 810, 880, 880, 830, 800, 790, 760, 800],
+          [880, 880, 880, 860, 720, 720, 620, 860, 970, 950, 880, 910, 850, 870, 840, 840, 850, 840, 840, 840],
+          [890, 810, 810, 820, 800, 770, 760, 740, 750, 760, 910, 920, 890, 860, 880, 720, 840, 850, 850, 780],
+          [890, 840, 780, 810, 760, 810, 790, 810, 820, 850, 870, 870, 810, 740, 810, 940, 950, 800, 810, 870]
+        ]
+      },
+      {
+        transform: {
+          type: 'boxplot',
+          config: { itemNameFormatter: 'expr {value}' }
+        }
+      },
+      {
+        fromDatasetIndex: 1,
+        fromTransformResult: 1
+      }
+    ],
+    tooltip: {
+      trigger: 'item',
+      axisPointer: {
+        type: 'shadow'
+      }
+    },
+    grid: {
+      left: '10%',
+      right: '10%',
+      bottom: '15%'
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: true,
+      nameGap: 30,
+      splitArea: {
+        show: false
+      },
+      splitLine: {
+        show: false
+      }
+    },
+    yAxis: {
+      type: 'value',
+      name: 'km/s minus 299,000',
+      splitArea: {
+        show: true
+      }
+    },
+    series: [
+      {
+        name: 'boxplot',
+        type: 'boxplot',
+        datasetIndex: 1
+      },
+      {
+        name: 'outlier',
+        type: 'scatter',
+        datasetIndex: 2
+      }
+    ]
+  },
+  'Basic Heatmap': {
+    tooltip: {
+      position: 'top'
+    },
+    grid: {
+      height: '50%',
+      top: '10%'
+    },
+    xAxis: {
+      type: 'category',
+      "data": "{{{ jsonArray (map table.rows 'Country') }}}",
+      splitArea: {
+        show: true
+      }
+    },
+    yAxis: {
+      type: 'category',
+      "data": "{{{ jsonArray (map table.rows 'Segment') }}}",
+      splitArea: {
+        show: true
+      }
+    },
+    visualMap: {
+      min: 0,
+      max: 10,
+      calculable: true,
+      orient: 'horizontal',
+      left: 'center',
+      bottom: '15%'
+    },
+    series: [
+      {
+        name: 'Punch Card',
+        type: 'heatmap',
+        "data": "{{{ jsonArray (map table.rows ' Sales') }}}",
+        label: {
+          show: true
+        },
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        }
+      }
+    ]
+  },
+  'Basic Tree': {
+    tooltip: {
+      trigger: 'item',
+      triggerOn: 'mousemove'
+    },
+    series: [
+      {
+        type: 'tree',
+        data: [],
+        top: '1%',
+        left: '7%',
+        bottom: '1%',
+        right: '20%',
+        symbolSize: 7,
+        label: {
+          position: 'left',
+          verticalAlign: 'middle',
+          align: 'right',
+          fontSize: 9
+        },
+        leaves: {
+          label: {
+            position: 'right',
+            verticalAlign: 'middle',
+            align: 'left'
+          }
+        },
+        emphasis: {
+          focus: 'descendant'
+        },
+        expandAndCollapse: true,
+        animationDuration: 550,
+        animationDurationUpdate: 750
+      }
+    ]
+  },
+  'Basic Treemap': {
+    title: {
+      text: 'Disk Usage',
+      left: 'center'
+    },
+    tooltip: {
+      // formatter: function (info) {
+      //   var value = info.value;
+      //   var treePathInfo = info.treePathInfo;
+      //   var treePath = [];
+      //   for (var i = 1; i < treePathInfo.length; i++) {
+      //     treePath.push(treePathInfo[i].name);
+      //   }
+      //   return [
+      //     '<div class="tooltip-title">' +
+      //       formatUtil.encodeHTML(treePath.join('/')) +
+      //       '</div>',
+      //     'Disk Usage: ' + formatUtil.addCommas(value) + ' KB'
+      //   ].join('');
+      // }
+    },
+    series: [
+      {
+        name: 'Disk Usage',
+        type: 'treemap',
+        visibleMin: 300,
+        label: {
+          show: true,
+          formatter: '{b}'
+        },
+        itemStyle: {
+          borderColor: '#fff'
+        },
+        levels: [
+          {
+            itemStyle: {
+              borderWidth: 0,
+              gapWidth: 5
+            }
+          },
+          {
+            itemStyle: {
+              gapWidth: 1
+            }
+          },
+          {
+            colorSaturation: [0.35, 0.5],
+            itemStyle: {
+              gapWidth: 1,
+              borderColorSaturation: 0.6
+            }
+          }
+        ],
+        data: []
+      }
+    ]
+  },
+  'Basic Sunburst': {
+    series: {
+      type: 'sunburst',
+      // emphasis: {
+      //     focus: 'ancestor'
+      // },
+      data: [],
+      radius: [0, '90%'],
+      label: {
+        rotate: 'radial'
       }
     }
-  ]
+  },
+  'Basic Sankey': {
+    series: {
+      type: 'sankey',
+      layout: 'none',
+      emphasis: {
+        focus: 'adjacency'
+      },
+      data: [
+        {
+          name: 'a'
+        },
+        {
+          name: 'b'
+        },
+        {
+          name: 'a1'
+        },
+        {
+          name: 'a2'
+        },
+        {
+          name: 'b1'
+        },
+        {
+          name: 'c'
+        }
+      ],
+      links: [
+        {
+          source: 'a',
+          target: 'a1',
+          value: 5
+        },
+        {
+          source: 'a',
+          target: 'a2',
+          value: 3
+        },
+        {
+          source: 'b',
+          target: 'b1',
+          value: 8
+        },
+        {
+          source: 'a',
+          target: 'b1',
+          value: 3
+        },
+        {
+          source: 'b1',
+          target: 'a1',
+          value: 1
+        },
+        {
+          source: 'b1',
+          target: 'c',
+          value: 2
+        }
+      ]
+    }
+  },
+  'Basic Funnel': {
+    title: {
+      text: 'Funnel'
+    },
+    tooltip: {
+      trigger: 'item',
+      formatter: '{a} <br/>{b} : {c}%'
+    },
+    toolbox: {
+      feature: {
+        dataView: { readOnly: false },
+        restore: {},
+        saveAsImage: {}
+      }
+    },
+    legend: {
+      data: ['Show', 'Click', 'Visit', 'Inquiry', 'Order']
+    },
+    series: [
+      {
+        name: 'Funnel',
+        type: 'funnel',
+        left: '10%',
+        top: 60,
+        bottom: 60,
+        width: '80%',
+        min: 0,
+        max: 100,
+        minSize: '0%',
+        maxSize: '100%',
+        sort: 'descending',
+        gap: 2,
+        label: {
+          show: true,
+          position: 'inside'
+        },
+        labelLine: {
+          length: 10,
+          lineStyle: {
+            width: 1,
+            type: 'solid'
+          }
+        },
+        itemStyle: {
+          borderColor: '#fff',
+          borderWidth: 1
+        },
+        emphasis: {
+          label: {
+            fontSize: 20
+          }
+        },
+        data: [
+          { value: 60, name: 'Visit' },
+          { value: 40, name: 'Inquiry' },
+          { value: 20, name: 'Order' },
+          { value: 80, name: 'Click' },
+          { value: 100, name: 'Show' }
+        ]
+      }
+    ]
+  },
+  'Basic Gauge': {
+    tooltip: {
+      formatter: '{a} <br/>{b} : {c}%'
+    },
+    series: [
+      {
+        name: 'Pressure',
+        type: 'gauge',
+        detail: {
+          formatter: '{value}'
+        },
+        data: [
+          {
+            value: 50,
+            name: 'SCORE'
+          }
+        ]
+      }
+    ]
   }
 }

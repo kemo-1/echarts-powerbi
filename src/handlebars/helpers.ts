@@ -27,6 +27,7 @@ import {
     scaleRadial,
     scaleSequential
 } from "d3-scale";
+import { Table } from "src/utils";
 
 const dateFormats = new Map<string, (date: Date) => string>()
 const utcFormats = new Map<string, (date: Date) => string>()
@@ -39,6 +40,7 @@ const scales = new Map<string, Scale>()
 const axes = new Map<string, Axis<unknown>>()
 const variables = new Map<string, number | string | Date | boolean>()
 const axisFunctions = { axisBottom, axisLeft, axisRight, axisTop }
+const globals = new Map<string, unknown>();
 
 const scaleFunctions = {
     scaleBand,
@@ -59,6 +61,10 @@ export function hardReset() {
     axes.clear();
     scales.clear();
     variables.clear();
+}
+
+export function registerGlobal(name: string, value: unknown) {
+    globals.set(name, value)
 }
 
 Handlebars.registerHelper('resetScales', function () {
@@ -161,6 +167,12 @@ Handlebars.registerHelper('jsonArray', (...options) => {
 
 Handlebars.registerHelper('map', (array, key) => {
     return array.map(o => o[key]);
+})
+
+Handlebars.registerHelper('column', (name) => {
+    const table: Table = globals.get('table') as Table;
+    const column = table.rows.map(r => r[name]);
+    return "[" + column.map(i => `"${i}"`).join(",") + "]"
 })
 
 Handlebars.registerHelper('min', (array) => {

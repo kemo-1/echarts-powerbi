@@ -15,7 +15,7 @@ import { Mapping } from "./Mapping";
 import { Viewer } from "./View";
 
 import { schemas } from './charts';
-import { hardReset } from "./handlebars/helpers";
+import { hardReset, registerGlobal } from "./handlebars/helpers";
 import { useAppSelector } from "./redux/hooks";
 
 import "./handlebars/helpers";
@@ -25,6 +25,9 @@ import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-java";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
+
+// import { transform } from 'echarts-stat';
+// echarts.registerTransform(transform.histogram);
 
 const { Header, Content, Sider, Footer } = Layout;
 
@@ -51,7 +54,6 @@ const chartTree = {
     ],
     'Scatter': [
         'Scatter',
-        'Clustering Process'
     ],
     'Candlestick': [
         'Basic Candlestick',
@@ -60,28 +62,28 @@ const chartTree = {
         'Basic Radar Chart'
     ],
     'Boxplot': [
-
+        'Basic Boxplot',
     ],
     'Heatmap': [
-
+        'Basic Heatmap'
     ],
     'Tree': [
-
+        'Basic Tree',
     ],
     'Treemap': [
-
+        'Basic Treemap',
     ],
     'Sunburst': [
-
+        'Basic Sunburst',
     ],
     'Sankey': [
-
+        'Basic Sankey',
     ],
     'Funnel': [
-
+        'Basic Funnel',
     ],
     'Gauge': [
-
+        'Basic Gauge',
     ],
 }
 
@@ -154,6 +156,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
         Handlebars.registerHelper('useSelectionClear', function () {
             return `data-selection-clear="true"`
         })
+        registerGlobal('table', table)
         try {
             return template({
                 table,
@@ -164,8 +167,6 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
             return `<h4>${err.message}</h4><pre>${err.stack}</pre>`
         }
     }, [host, table, viewport, template])
-
-    console.log('quick chart content', content);
 
     return (
         <>
