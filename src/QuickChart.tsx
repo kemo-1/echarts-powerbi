@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
 import React from "react";
 import Handlebars from "handlebars";
-
+import JSON5 from 'json5'
 import * as echarts from "echarts";
 
 import powerbiApi from "powerbi-visuals-api";
@@ -22,7 +22,7 @@ import "./handlebars/helpers";
 
 import AceEditor from "react-ace";
 
-import "ace-builds/src-noconflict/mode-java";
+import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
 
@@ -100,7 +100,7 @@ export interface QuickChartProps {
 export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: visualDataset, dataView, onSave }) => {
 
     const [error, setError] = React.useState<string>(null);
-    const [schema, setSchema] = React.useState<string>(JSON.stringify(schemas['Basic Line Chart'], null, " "));
+    const [schema, setSchema] = React.useState<string>(JSON5.stringify(schemas['Basic Line Chart'], null, " "));
     const host = useAppSelector((state) => state.options.host);
 
     const chartGroups: MenuProps['items'] = Object.keys(chartTree).map(
@@ -128,7 +128,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
 
     const mappingIsCorrect = verifyColumns(schema, chartColumns, dataView.metadata.columns).length === 0;
 
-    const dataset = mappingIsCorrect ? visualDataset : JSON.parse(schema).dataset;
+    const dataset = mappingIsCorrect ? visualDataset : JSON5.parse(schema).dataset;
     const table = useAppSelector((state) => state.options.table);
     const viewport = useAppSelector((state) => state.options.viewport);
 
@@ -136,6 +136,8 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
         let charttmpl = schema
         charttmpl = charttmpl.replaceAll('"{{{', " {{{ ")
         charttmpl = charttmpl.replaceAll('}}}"', " }}} ")
+        charttmpl = charttmpl.replaceAll('"{{', " {{")
+        charttmpl = charttmpl.replaceAll('}}"', "}} ")
         console.log('charttmpl quick chart', charttmpl);
         return Handlebars.compile(charttmpl);
     }, [schema])
@@ -174,6 +176,8 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
         setSchema(draft.current);
     }, [setSchema]);
 
+    console.log('content', content);
+
     return (
         <>
             {error ? (
@@ -197,7 +201,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                 items={chartGroups}
                                 onClick={(info) => {
                                     if (schemas[info.key]) {
-                                        setSchema(JSON.stringify(schemas[info.key], null, " "));
+                                        setSchema(JSON5.stringify(schemas[info.key], null, " "));
                                     }
                                 }}
                             />
@@ -234,10 +238,13 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                 <AceEditor
                                     width="100%"
                                     height={`${height * (9/10)}px`}
-                                    mode="ace/mode/json"
+                                    mode="json"
                                     theme="github"
                                     onChange={(edit) => {
                                         draft.current = edit;
+                                    }}
+                                    setOptions={{
+                                        useWorker: false
                                     }}
                                     value={schema}
                                     name="CONFIGURATION_ID"

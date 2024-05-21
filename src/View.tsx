@@ -1,5 +1,5 @@
 import React from "react";
-
+import JSON5 from 'json5'
 import * as echarts from "echarts";
 
 import { ErrorViewer } from "./Error";
@@ -21,19 +21,20 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
     const echart = React.useRef<echarts.EChartOption>({});
     
     const [error, setError] = React.useState<string>(null);
+    const [parsingError, setParsingError] = React.useState<string>(null);
 
     // Parse chart options
     React.useEffect(() => {
         try {
-            setError(null);
-            echart.current = JSON.parse(echartJSON);
+            setParsingError(null);
+            echart.current = JSON5.parse(echartJSON);
             echart.current.dataset = dataset;
         } catch(e) {
-            setError(e.message);
+            setParsingError(e.message);
             console.error(e);
             echart.current = {};
         }
-    }, [echartJSON, dataset, setError]);
+    }, [echartJSON, dataset, setParsingError]);
 
     // Create the echarts instance
     React.useEffect(() => {
@@ -83,12 +84,17 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
 
     return (
         <>
+            {parsingError ? (
+            <>
+                <ErrorViewer error={parsingError} height={height} width={width} json={echartJSON}/>
+            </>
+            ) : null }
             {error ? (
             <>
                 <ErrorViewer error={error} height={height} width={width} json={echartJSON}/>
             </>
             ) : null }
-            <Layout style={{backgroundColor: 'transparent'}}>
+            <Layout className={parsingError || error ? "hidden" : ""} style={{backgroundColor: 'transparent'}}>
                 <div
                     ref={mainDiv}
                     id="main"

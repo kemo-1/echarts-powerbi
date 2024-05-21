@@ -162,14 +162,14 @@ export const schemas = {
   "Basic Bar Chart": {
     xAxis: {
       type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      data: "{{{ column 'Country' }}}"
     },
     yAxis: {
       type: 'value'
     },
     series: [
       {
-        data: [120, 200, 150, 80, 70, 110, 130],
+        data: "{{{ column ' Sales' }}}",
         type: 'bar'
       }
     ]
@@ -177,14 +177,14 @@ export const schemas = {
   'Bar with Background': {
     xAxis: {
       type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      data: "{{{ column 'Country' }}}"
     },
     yAxis: {
       type: 'value'
     },
     series: [
       {
-        data: [120, 200, 150, 80, 70, 110, 130],
+        data: "{{{ column ' Sales' }}}",
         type: 'bar',
         showBackground: true,
         backgroundStyle: {
@@ -209,7 +209,7 @@ export const schemas = {
     xAxis: [
       {
         type: 'category',
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        data: "{{{ column 'Country' }}}",
         axisTick: {
           alignWithLabel: true
         }
@@ -225,14 +225,13 @@ export const schemas = {
         name: 'Direct',
         type: 'bar',
         barWidth: '60%',
-        data: [10, 52, 200, 334, 390, 330, 220]
+        data: "{{{ column ' Sales' }}}",
       }
     ]
   },
   'Waterfall Chart': {
     title: {
       text: 'Waterfall Chart',
-      subtext: 'Living Expenses in Shenzhen'
     },
     tooltip: {
       trigger: 'axis',
@@ -249,7 +248,7 @@ export const schemas = {
     xAxis: {
       type: 'category',
       splitLine: { show: false },
-      data: ['Total', 'Rent', 'Utilities', 'Transportation', 'Meals', 'Other']
+      data: "{{{ column 'Country' }}}"
     },
     yAxis: {
       type: 'value'
@@ -269,7 +268,7 @@ export const schemas = {
             color: 'transparent'
           }
         },
-        data: [0, 1700, 1400, 1200, 300, 0]
+        data: "{{{ column ' Sales' }}}"
       },
       {
         name: 'Life Cost',
@@ -279,7 +278,7 @@ export const schemas = {
           show: true,
           position: 'inside'
         },
-        data: [2900, 1200, 300, 200, 900, 300]
+        data: "{{{ column 'Gross Sales' }}}"
       }
     ]
   },
@@ -312,18 +311,7 @@ export const schemas = {
       axisLabel: { show: false },
       axisTick: { show: false },
       splitLine: { show: false },
-      data: [
-        'ten',
-        'nine',
-        'eight',
-        'seven',
-        'six',
-        'five',
-        'four',
-        'three',
-        'two',
-        'one'
-      ]
+      data: "{{{ column 'Country' }}}"
     },
     series: [
       {
@@ -335,16 +323,7 @@ export const schemas = {
           formatter: '{b}'
         },
         data: [
-          { value: -0.07, label: 'right' },
-          { value: -0.09, label: 'right' },
-          0.2,
-          0.44,
-          { value: -0.23, label: 'right' },
-          0.08,
-          { value: -0.17, label: 'right' },
-          0.47,
-          { value: -0.36, label: 'right' },
-          0.18
+          "{{#each table.rows}} { value:  '{{#if @last}}-{{else}}{{/if}}{{{this.[ Sales]}}}' , label: 'right' }{{#if @last}}{{else}},{{/if}} {{/each}}"
         ]
       }
     ]
@@ -583,30 +562,7 @@ export const schemas = {
     series: [
       {
         symbolSize: 20,
-        data: [
-          [10.0, 8.04],
-          [8.07, 6.95],
-          [13.0, 7.58],
-          [9.05, 8.81],
-          [11.0, 8.33],
-          [14.0, 7.66],
-          [13.4, 6.81],
-          [10.0, 6.33],
-          [14.0, 8.96],
-          [12.5, 6.82],
-          [9.15, 7.2],
-          [11.5, 7.2],
-          [3.03, 4.23],
-          [12.2, 7.83],
-          [2.02, 4.47],
-          [1.05, 3.33],
-          [4.05, 4.96],
-          [6.03, 7.24],
-          [12.0, 6.26],
-          [12.0, 8.84],
-          [7.08, 5.82],
-          [5.02, 5.68]
-        ],
+        data: "{{{ select ' Sales' 'Gross Sales' }}}",
         type: 'scatter'
       }
     ]

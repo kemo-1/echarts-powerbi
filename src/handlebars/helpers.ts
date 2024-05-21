@@ -175,6 +175,17 @@ Handlebars.registerHelper('column', (name) => {
     return "[" + column.map(i => `"${i}"`).join(",") + "]"
 })
 
+Handlebars.registerHelper('select', (...options) => {
+    options.pop()
+    const table: Table = globals.get('table') as Table;
+    const columnNames = options;
+    const column = table.rows.map(r => {
+        const data = columnNames.map(names => r[names])
+        return "[" + data.map(i => `"${i}"`).join(",") + "]"
+    });
+    return "[" + column.map(i => `${i}`).join(",") + "]"
+})
+
 Handlebars.registerHelper('min', (array) => {
     return min(array)
 })

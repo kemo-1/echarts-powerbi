@@ -8,6 +8,7 @@ import ISelectionId = powerbiVisualsApi.visuals.ISelectionId;
 import { Config as DompurifyConfig, sanitize } from "dompurify";
 import { EChartOption, LineSeriesOption } from "echarts";
 import { utcParse } from "d3-time-format";
+import JSON5 from 'json5'
 
 import Series = EChartOption.Series;
 
@@ -39,7 +40,7 @@ export function safeParse(echartJson: string): any {
     let chart: any = {};
 
     try {
-        chart = echartJson ? JSON.parse(echartJson) : {};
+        chart = echartJson ? JSON5.parse(echartJson) : {};
     } catch(e) {
         console.log(e.message);
     }
@@ -231,7 +232,7 @@ export function applyMapping(echartJson: string | undefined, mapping: Record<str
         dimensions: dataset.dimensions
     };
 
-    return JSON.stringify(echart);
+    return JSON5.stringify(echart);
 }
 
 export function verifyColumns(echartJson: string | undefined, chartColumns: string[], visualColumns: powerbiVisualsApi.DataViewMetadataColumn[]) : Record<string, string>[] {

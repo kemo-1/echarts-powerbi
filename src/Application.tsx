@@ -7,6 +7,7 @@ import { Tutorial } from './Tutorial';
 import { Mapping } from './Mapping';
 import { QuickChart } from './QuickChart';
 import Handlebars from "handlebars";
+import JSON5 from 'json5'
 
 import { useAppSelector, useAppDispatch } from './redux/hooks';
 import { setSettings, reVerifyColumns } from './redux/slice';
@@ -55,7 +56,7 @@ export const Application: React.FC<ApplicationProps> = () => {
     }, [host])
 
     const template = React.useMemo(() => {
-        let charttmpl = JSON.stringify(JSON.parse(chart), null, " ")
+        let charttmpl = JSON5.stringify(JSON5.parse(chart), null, " ")
         charttmpl = charttmpl.replaceAll("\"{{{", "{{{")
         charttmpl = charttmpl.replaceAll("}}}\"", "}}}")
         return Handlebars.compile(charttmpl);
@@ -102,7 +103,7 @@ export const Application: React.FC<ApplicationProps> = () => {
                 dataView={dataView}
                 onSave={(json) => {
                     persistProperty(json);
-                    const newSettings: IVisualSettings = JSON.parse(JSON.stringify(settings));
+                    const newSettings: IVisualSettings = JSON5.parse(JSON5.stringify(settings));
                     newSettings.chart.echart = json;
                     dispatch(setSettings(newSettings));
                 }}
@@ -118,7 +119,7 @@ export const Application: React.FC<ApplicationProps> = () => {
                 unmappedColumns={unmappedColumns}
                 onSaveMapping={(mapping) => {
                     const mappedJSON = applyMapping(settings.chart.echart, mapping, dataset);
-                    const newSettings: IVisualSettings = JSON.parse(JSON.stringify(settings));
+                    const newSettings: IVisualSettings = JSON5.parse(JSON5.stringify(settings));
                     newSettings.chart.echart = mappedJSON;
                     dispatch(setSettings(newSettings));
                     dispatch(reVerifyColumns());
