@@ -14,7 +14,7 @@ import { setSettings, reVerifyColumns } from './redux/slice';
 import { IVisualSettings } from './settings';
 import { applyMapping } from './utils';
 
-import { hardReset } from "./handlebars/helpers"
+import { hardReset, registerGlobal } from "./handlebars/helpers"
 import { sanitizeHTML } from './utils'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -78,6 +78,7 @@ export const Application: React.FC<ApplicationProps> = () => {
         Handlebars.registerHelper('useSelectionClear', function () {
             return `data-selection-clear="true"`
         })
+        registerGlobal('table', table)
         try {
             return template({
                 table,
