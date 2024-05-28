@@ -101,6 +101,7 @@ export const Application: React.FC<ApplicationProps> = () => {
                 height={option.viewport.height}
                 width={option.viewport.width}
                 dataView={dataView}
+                current={chart}
                 onSave={(json) => {
                     persistProperty(json);
                     const newSettings: IVisualSettings = JSON5.parse(JSON5.stringify(settings));

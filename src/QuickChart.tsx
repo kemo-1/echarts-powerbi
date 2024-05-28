@@ -32,6 +32,7 @@ import "ace-builds/src-noconflict/ext-language_tools";
 const { Header, Content, Sider, Footer } = Layout;
 
 const chartTree = {
+    'Current': [],
     'Line': [
         'Basic Line Chart',
         'Smoothed Line Chart',
@@ -93,18 +94,26 @@ export interface QuickChartProps {
     height: number;
     dataset: echarts.EChartOption.Dataset;
     dataView: DataView;
+    current: string;
     onSave: (json: string) => void;
 }
 
 /* eslintd-isable max-lines-per-function */
-export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: visualDataset, dataView, onSave }) => {
+export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: visualDataset, dataView, current, onSave }) => {
 
     const [error, setError] = React.useState<string>(null);
-    const [schema, setSchema] = React.useState<string>(JSON5.stringify(schemas['Basic Line Chart'], null, " "));
+    const [schema, setSchema] = React.useState<string>(JSON5.stringify(schemas['Current'] || schemas['Basic Line Chart'], null, " "));
     const host = useAppSelector((state) => state.options.host);
 
     const chartGroups: MenuProps['items'] = Object.keys(chartTree).map(
         (group) => {
+            if (chartTree[group].length === 0)
+            {
+                return {
+                    key: group,
+                    label: `${group}`,
+                };
+            }
             return {
                 key: group,
                 label: `${group}`,
@@ -173,6 +182,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
     const draft = React.useRef<string>(schema);
 
     const onApplySchema = React.useCallback(() => {
+        debugger;
         setSchema(draft.current);
     }, [setSchema]);
 
@@ -189,7 +199,9 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                     <Layout style={{ height: '100%', background: 'transparent'}}>
                         <Sider width={200} style={{ background: colorBgContainer, overflowY: 'scroll' }}>
                             <Button style={{width: '100%', marginBottom: '10px'}} type="primary" onClick={() => {
-                                onSave(schema);
+                                debugger
+                                setSchema(draft.current);
+                                onSave(draft.current);
                             }}>
                                 Save
                             </Button>
@@ -200,7 +212,13 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                 style={{ height: '100%', borderRight: 0 }}
                                 items={chartGroups}
                                 onClick={(info) => {
-                                    if (schemas[info.key]) {
+                                    debugger;
+                                    if (info.key === 'Current') {
+                                        draft.current = current;
+                                        setSchema(current);
+                                    }
+                                    else if (schemas[info.key]) {
+                                        draft.current = JSON5.stringify(schemas[info.key], null, " ");
                                         setSchema(JSON5.stringify(schemas[info.key], null, " "));
                                     }
                                 }}

@@ -35,7 +35,6 @@ const initialState: VisualState = {
     viewport: {
         height: 0,
         width: 0
-    
     }
 }
 

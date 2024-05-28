@@ -249,7 +249,7 @@ export function verifyColumns(echartJson: string | undefined, chartColumns: stri
                     }
                 });
             }
-            if (key.endsWith('src')) {
+            if (key && typeof key == 'string' && key.endsWith('src')) {
                 const columnMapped = visualColumns.find(vc => vc.displayName === value);
                 if (!columnMapped) {
                     unmappedColumns.push({[tail + "." + key]: value});
