@@ -9,7 +9,7 @@ import DataView = powerbiApi.DataView;
 
 import { ErrorViewer } from "./Error";
 
-import { Breadcrumb, Button, Layout, Menu, MenuProps, theme } from 'antd';
+import { Breadcrumb, Button, Flex, Layout, Menu, MenuProps, theme } from 'antd';
 import { applyMapping, getChartColumns, verifyColumns } from "./utils";
 import { Mapping } from "./Mapping";
 import { Viewer } from "./View";
@@ -182,7 +182,6 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
     const draft = React.useRef<string>(schema);
 
     const onApplySchema = React.useCallback(() => {
-        debugger;
         setSchema(draft.current);
     }, [setSchema]);
 
@@ -199,7 +198,6 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                     <Layout style={{ height: '100%', background: 'transparent'}}>
                         <Sider width={200} style={{ background: colorBgContainer, overflowY: 'scroll' }}>
                             <Button style={{width: '100%', marginBottom: '10px'}} type="primary" onClick={() => {
-                                debugger
                                 setSchema(draft.current);
                                 onSave(draft.current);
                             }}>
@@ -212,7 +210,6 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                 style={{ height: '100%', borderRight: 0 }}
                                 items={chartGroups}
                                 onClick={(info) => {
-                                    debugger;
                                     if (info.key === 'Current') {
                                         draft.current = current;
                                         setSchema(current);
@@ -233,7 +230,10 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                     background: colorBgContainer,
                                 }}
                             >
-                                <Button className="apply" onClick={onApplySchema}>Apply</Button>
+                                <Flex vertical={false}>
+                                    <Button className="apply" onClick={onApplySchema}>Apply</Button>
+                                    <a className="docs-link" onClick={(e) => host.launchUrl('https://ilfat-galiev.im/docs/category/echarts-visual')}>Documentation</a>
+                                </Flex>
                                 <h4>Preview</h4>
                                 <Viewer
                                     dataset={dataset}
