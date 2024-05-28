@@ -90,7 +90,7 @@ export const Application: React.FC<ApplicationProps> = () => {
         }
     }, [host, table, viewport, template])
 
-    if (!option || !settings || !dataView) {
+    if (!option || !settings) {
         return (<h1>Loading...</h1>)
     }
 
@@ -129,7 +129,9 @@ export const Application: React.FC<ApplicationProps> = () => {
                 }}
             />
         )
-    } else {
+    }
+
+    if (!dataView || !dataView.categorical) {
         const categorical = dataView?.categorical;
         if (!dataView && !categorical || settings && settings.chart.echart === '{}') {
             return (

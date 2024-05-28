@@ -127,7 +127,7 @@
     ],
     "advancedEditModeSupport": 2,
     "supportsHighlight": false,
-    "supportsLandingPage": false,
+    "supportsLandingPage": true,
     "sorting": {
         "default": {}
     },
