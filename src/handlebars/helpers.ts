@@ -170,20 +170,30 @@ Handlebars.registerHelper('map', (array, key) => {
 })
 
 Handlebars.registerHelper('column', (name) => {
-    const table: Table = globals.get('table') as Table;
-    const column = table.rows.map(r => r[name]);
-    return "[" + column.map(i => `"${i}"`).join(",") + "]"
+    const table: Table = globals.get('table') as Table
+    const found = table.columns.find(c => c.displayName == name)
+    if (found) {
+        const column = table.rows.map(r => r[name]);
+        return "[" + column.map(i => `"${i}"`).join(",") + "]"
+    } else {
+        return `Column "${name}" not found`
+    }
 })
 
 Handlebars.registerHelper('select', (...options) => {
     options.pop()
-    const table: Table = globals.get('table') as Table;
-    const columnNames = options;
-    const column = table.rows.map(r => {
-        const data = columnNames.map(names => r[names])
-        return "[" + data.map(i => `"${i}"`).join(",") + "]"
-    });
-    return "[" + column.map(i => `${i}`).join(",") + "]"
+    const table: Table = globals.get('table') as Table
+    const columnNames = options
+    const notFoundColumns = columnNames.filter(c => !table.columns.find(cc => cc.displayName == c));
+    if (notFoundColumns.length > 0) {
+        return `Column "${notFoundColumns.join(',')}" not found`
+    } else {
+        const column = table.rows.map(r => {
+            const data = columnNames.map(names => r[names])
+            return "[" + data.map(i => `"${i}"`).join(",") + "]"
+        });
+        return "[" + column.map(i => `${i}`).join(",") + "]"
+    }
 })
 
 Handlebars.registerHelper('min', (array) => {

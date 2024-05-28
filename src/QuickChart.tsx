@@ -215,6 +215,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                     background: colorBgContainer,
                                 }}
                             >
+                                <Button className="apply" onClick={onApplySchema}>Apply</Button>
                                 <h4>Preview</h4>
                                 <Viewer
                                     dataset={dataset}
@@ -250,7 +251,6 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                     name="CONFIGURATION_ID"
                                     editorProps={{ $blockScrolling: true }}
                                 />
-                                <Button className="apply" onClick={onApplySchema}>Apply</Button>
                             </Content>
                         </Layout>
                     </Layout>
