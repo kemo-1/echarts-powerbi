@@ -8,52 +8,52 @@ export const schemas: {
     },
     xAxis: {
       type: 'category',
-      // HBT data: {{ column 'Country' }},
+      // HBT data: {{{ column 'Country' }}},
     },
     yAxis: {
       type: 'value'
     },
     series: [
       {
-        // HBT data: {{ column ' Sales' }},
+        // HBT data: {{{ column ' Sales' }}},
         type: 'line'
       }
     ]
   }`,
-  "Smoothed Line Chart": {
+  "Smoothed Line Chart": `{
     xAxis: {
       type: 'category',
-      data: "{{{ jsonArray (map table.rows 'Country') }}}"
+      // HBT data: {{{ jsonArray (map table.rows 'Country') }}},
     },
     yAxis: {
       type: 'value'
     },
     series: [
       {
-        data: "{{{ jsonArray (map table.rows ' Sales') }}}",
+        // HBT data: {{{ jsonArray (map table.rows ' Sales') }}},
         type: 'line',
         smooth: true
       }
     ]
-  },
-  "Basic area chart": {
+  }`,
+  "Basic area chart": `{
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: "{{{ jsonArray (map table.rows 'Country') }}}"
+      // HBT data: {{{ jsonArray (map table.rows 'Country') }}},
     },
     yAxis: {
       type: 'value'
     },
     series: [
       {
-        data: "{{{ jsonArray (map table.rows ' Sales') }}}",
+        // HBT data: {{{ jsonArray (map table.rows ' Sales') }}},
         type: 'line',
         areaStyle: {}
       }
     ]
-  },
-  "Stacked Line": {
+  }`,
+  "Stacked Line": `{
     title: {
       text: 'Stacked Line'
     },
@@ -61,7 +61,7 @@ export const schemas: {
       trigger: 'axis'
     },
     legend: {
-      data: "{{{ jsonArray (map table.rows 'Country') }}}"
+      // HBT data: {{{ jsonArray (map table.rows 'Country') }}},
     },
     grid: {
       left: '3%',
@@ -77,7 +77,7 @@ export const schemas: {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: "{{{ jsonArray (map table.rows 'Country') }}}"
+      // HBT data: {{{ jsonArray (map table.rows 'Country') }}},
     },
     yAxis: {
       type: 'value'
@@ -87,17 +87,17 @@ export const schemas: {
         name: 'Sales',
         type: 'line',
         stack: 'Total',
-        data: "{{{ jsonArray (map table.rows ' Sales') }}}",
+        // HBT data: {{{ jsonArray (map table.rows ' Sales') }}},
       },
       {
         name: 'Gross Sales',
         type: 'line',
         stack: 'Total',
-        data: "{{{ jsonArray (map table.rows 'Gross Sales') }}}",
+        // HBT data: {{{ jsonArray (map table.rows 'Gross Sales') }}}
       }
     ]
-  },
-  "Stacked Area Chart": {
+  }`,
+  "Stacked Area Chart": `{
     title: {
       text: 'Stacked Area Chart'
     },
@@ -111,7 +111,7 @@ export const schemas: {
       }
     },
     legend: {
-      data: "{{{ jsonArray (map table.rows 'Country') }}}"
+      // HBT data: {{{ jsonArray (map table.rows 'Country') }}}
     },
     toolbox: {
       feature: {
@@ -128,8 +128,7 @@ export const schemas: {
       {
         type: 'category',
         boundaryGap: false,
-        data: "{{{ jsonArray (map table.rows 'Country') }}}"
-
+        // HBT data: {{{ jsonArray (map table.rows 'Country') }}}
       }
     ],
     yAxis: [
@@ -146,7 +145,7 @@ export const schemas: {
         emphasis: {
           focus: 'series'
         },
-        data: "{{{ jsonArray (map table.rows ' Sales') }}}",
+        // HBT data: {{{ jsonArray (map table.rows ' Sales') }}}
       },
       {
         name: 'Gross Sales',
@@ -156,36 +155,36 @@ export const schemas: {
         emphasis: {
           focus: 'series'
         },
-        data: "{{{ jsonArray (map table.rows 'Gross Sales') }}}",
+        // HBT data: {{{ jsonArray (map table.rows 'Gross Sales') }}}
       }
     ]
-  },
-  "Basic Bar Chart": {
+  }`,
+  "Basic Bar Chart": `{
     xAxis: {
       type: 'category',
-      data: "{{{ column 'Country' }}}"
+      // HBT data: {{{ column 'Country' }}}
     },
     yAxis: {
       type: 'value'
     },
     series: [
       {
-        data: "{{{ column ' Sales' }}}",
+        // HBT data: {{{ column ' Sales' }}},
         type: 'bar'
       }
     ]
-  },
-  'Bar with Background': {
+  }`,
+  'Bar with Background': `{
     xAxis: {
       type: 'category',
-      data: "{{{ column 'Country' }}}"
+      // HBT data: {{{ column 'Country' }}}
     },
     yAxis: {
       type: 'value'
     },
     series: [
       {
-        data: "{{{ column ' Sales' }}}",
+        // HBT data: {{{ column ' Sales' }}},
         type: 'bar',
         showBackground: true,
         backgroundStyle: {
@@ -193,8 +192,8 @@ export const schemas: {
         }
       }
     ]
-  },
-  'Axis Align with Tick': {
+  }`,
+  'Axis Align with Tick': `{
     tooltip: {
       trigger: 'axis',
       axisPointer: {
@@ -210,7 +209,7 @@ export const schemas: {
     xAxis: [
       {
         type: 'category',
-        data: "{{{ column 'Country' }}}",
+        // HBT data: {{{ column 'Country' }}},
         axisTick: {
           alignWithLabel: true
         }
@@ -226,11 +225,11 @@ export const schemas: {
         name: 'Direct',
         type: 'bar',
         barWidth: '60%',
-        data: "{{{ column ' Sales' }}}",
+        // HBT data: {{{ column ' Sales' }}},
       }
     ]
-  },
-  'Waterfall Chart': {
+  }`,
+  'Waterfall Chart': `{
     title: {
       text: 'Waterfall Chart',
     },
@@ -249,7 +248,7 @@ export const schemas: {
     xAxis: {
       type: 'category',
       splitLine: { show: false },
-      data: "{{{ column 'Country' }}}"
+      // HBT data: {{{ column 'Country' }}},
     },
     yAxis: {
       type: 'value'
@@ -269,7 +268,7 @@ export const schemas: {
             color: 'transparent'
           }
         },
-        data: "{{{ column ' Sales' }}}"
+        // HBT data: {{{ column ' Sales' }}}
       },
       {
         name: 'Life Cost',
@@ -279,11 +278,11 @@ export const schemas: {
           show: true,
           position: 'inside'
         },
-        data: "{{{ column 'Gross Sales' }}}"
+        // HBT data: {{{ column 'Gross Sales' }}},
       }
     ]
-  },
-  'Bar Chart with Negative Value': {
+  }`,
+  'Bar Chart with Negative Value': `{
     title: {
       text: 'Bar Chart with Negative Value'
     },
@@ -312,7 +311,7 @@ export const schemas: {
       axisLabel: { show: false },
       axisTick: { show: false },
       splitLine: { show: false },
-      data: "{{{ column 'Country' }}}"
+      // HBT data: {{{ column 'Country' }}},
     },
     series: [
       {
@@ -324,12 +323,19 @@ export const schemas: {
           formatter: '{b}'
         },
         data: [
-          "{{#each table.rows}} { value:  '{{#if @last}}-{{else}}{{/if}}{{{this.[ Sales]}}}' , label: 'right' }{{#if @last}}{{else}},{{/if}} {{/each}}"
+          /* HBT
+          {{#each table.rows}}
+            {
+              value: '{{#if @last}}-{{else}}{{/if}}{{{this.[ Sales]}}}',
+              label: 'right'
+            },
+          {{/each}}
+          */
         ]
       }
     ]
-  },
-  'Bar Label Rotation': {
+  }`,
+  'Bar Label Rotation': `{
     tooltip: {
       trigger: 'axis',
       axisPointer: {
@@ -337,7 +343,7 @@ export const schemas: {
       }
     },
     legend: {
-      data: ['Forest', 'Steppe', 'Desert', 'Wetland']
+      // HBT data: {{{ column 'Country' }}},
     },
     toolbox: {
       show: true,
@@ -356,7 +362,7 @@ export const schemas: {
       {
         type: 'category',
         axisTick: { show: false },
-        data: ['2012', '2013', '2014', '2015', '2016']
+        // HBT data: {{{ column 'Country' }}},
       }
     ],
     yAxis: [
@@ -366,41 +372,25 @@ export const schemas: {
     ],
     series: [
       {
-        name: 'Forest',
+        name: 'Sales',
         type: 'bar',
         barGap: 0,
         emphasis: {
           focus: 'series'
         },
-        data: [320, 332, 301, 334, 390]
+        // HBT data: {{{ column ' Sales' }}},
       },
       {
-        name: 'Steppe',
+        name: 'Gross Sales',
         type: 'bar',
         emphasis: {
           focus: 'series'
         },
-        data: [220, 182, 191, 234, 290]
+        // HBT data: {{{ column 'Gross Sales' }}},
       },
-      {
-        name: 'Desert',
-        type: 'bar',
-        emphasis: {
-          focus: 'series'
-        },
-        data: [150, 232, 201, 154, 190]
-      },
-      {
-        name: 'Wetland',
-        type: 'bar',
-        emphasis: {
-          focus: 'series'
-        },
-        data: [98, 77, 101, 99, 40]
-      }
     ]
-  },
-  'Stacked Horizontal Bar': {
+  }`,
+  'Stacked Horizontal Bar': `{
     tooltip: {
       trigger: 'axis',
       axisPointer: {
@@ -420,11 +410,11 @@ export const schemas: {
     },
     yAxis: {
       type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      // HBT data: {{{ column 'Country' }}},
     },
     series: [
       {
-        name: 'Direct',
+        name: 'Sales',
         type: 'bar',
         stack: 'total',
         label: {
@@ -433,10 +423,10 @@ export const schemas: {
         emphasis: {
           focus: 'series'
         },
-        data: [320, 302, 301, 334, 390, 330, 320]
+        // HBT data: {{{ column ' Sales' }}},
       },
       {
-        name: 'Mail Ad',
+        name: 'Gross Sales',
         type: 'bar',
         stack: 'total',
         label: {
@@ -445,58 +435,22 @@ export const schemas: {
         emphasis: {
           focus: 'series'
         },
-        data: [120, 132, 101, 134, 90, 230, 210]
+        // HBT data: {{{ column 'Gross Sales' }}},
       },
-      {
-        name: 'Affiliate Ad',
-        type: 'bar',
-        stack: 'total',
-        label: {
-          show: true
-        },
-        emphasis: {
-          focus: 'series'
-        },
-        data: [220, 182, 191, 234, 290, 330, 310]
-      },
-      {
-        name: 'Video Ad',
-        type: 'bar',
-        stack: 'total',
-        label: {
-          show: true
-        },
-        emphasis: {
-          focus: 'series'
-        },
-        data: [150, 212, 201, 154, 190, 330, 410]
-      },
-      {
-        name: 'Search Engine',
-        type: 'bar',
-        stack: 'total',
-        label: {
-          show: true
-        },
-        emphasis: {
-          focus: 'series'
-        },
-        data: [820, 832, 901, 934, 1290, 1330, 1320]
-      }
     ]
-  },
-  'Stacked Bar Chart on Polar': {
+  }`,
+  'Stacked Bar Chart on Polar': `{
     angleAxis: {},
     radiusAxis: {
       type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu'],
+      // HBT data: {{{ column 'Country' }}},
       z: 10
     },
     polar: {},
     series: [
       {
         type: 'bar',
-        data: [1, 2, 3, 4],
+        // HBT data: {{{ column ' Sales' }}},
         coordinateSystem: 'polar',
         name: 'A',
         stack: 'a',
@@ -506,19 +460,9 @@ export const schemas: {
       },
       {
         type: 'bar',
-        data: [2, 4, 6, 8],
+        // HBT data: {{{ column 'Gross Sales' }}},
         coordinateSystem: 'polar',
         name: 'B',
-        stack: 'a',
-        emphasis: {
-          focus: 'series'
-        }
-      },
-      {
-        type: 'bar',
-        data: [1, 2, 3, 4],
-        coordinateSystem: 'polar',
-        name: 'C',
         stack: 'a',
         emphasis: {
           focus: 'series'
@@ -527,9 +471,9 @@ export const schemas: {
     ],
     legend: {
       show: true,
-      data: ['A', 'B', 'C']
+      // HBT data: {{{ column 'Country' }}},
     }
-  },
+  }`,
   'Half Pie Chart': `{
     tooltip: {
       trigger: 'item'
@@ -547,10 +491,10 @@ export const schemas: {
         // adjust the start and end angle
         startAngle: 180,
         endAngle: 360,
-        /* #HBT
+        /* HBT
         data: [ 
          {{#each table.rows}}
-         {  value: {{this.[ Sales]}}, name: '{{this.[Country]}}' },
+          {  value: {{this.[ Sales]}}, name: '{{this.[Country]}}' },
          {{/each}}
          ]
          */ 
@@ -586,7 +530,7 @@ export const schemas: {
         labelLine: {
           show: false
         },
-        /* #HBT
+        /* HBT
          data: [ 
          {{#each table.rows}}
          {  value: {{this.[ Sales]}}, name: '{{this.[Country]}}' },
@@ -596,17 +540,17 @@ export const schemas: {
       }
     ]
   }`,
-  'Scatter': {
+  'Scatter': `{
     xAxis: {},
     yAxis: {},
     series: [
       {
         symbolSize: 20,
-        data: "{{{ select ' Sales' 'Gross Sales' }}}",
+        // HBT data: {{{ select ' Sales' 'Gross Sales' }}},
         type: 'scatter'
       }
     ]
-  },
+  }`,
   'Clustering Process': {
     dataset: [
       {
@@ -722,7 +666,7 @@ export const schemas: {
         // adjust the start and end angle
         startAngle: 90,
         endAngle: 180,
-        /* #HBT
+        /* HBT
          data: [ 
          {{#each table.rows}}
          {  value: {{this.[ Sales]}}, name: '{{this.[Country]}}' },

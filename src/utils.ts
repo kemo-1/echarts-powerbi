@@ -39,10 +39,10 @@ export function sanitizeHTML(dirty: string) {
 /** uncoments block and line  comments of string of code */
 export function uncommentCodeComments(code: string): string {
     // Uncomment block comments (/* ... */)
-    code = code.replace(/\/\*\s#HBT([\s\S]*?)\*\//gm, '$1');
+    code = code.replace(/\/\*\sHBT([\s\S]*?)\*\//gm, '$1');
 
     // Uncomment line comments (// ...)
-    code = code.replace(/\/\/\s#HBT\s(.*)/g, '$1');
+    code = code.replace(/\/\/\sHBT\s(.*)/g, '$1');
 
     return code;
 }
