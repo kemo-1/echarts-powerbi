@@ -9,7 +9,7 @@ import DataView = powerbiApi.DataView;
 
 import { ErrorViewer } from "./Error";
 
-import { Breadcrumb, Button, Flex, Layout, Menu, MenuProps, theme } from 'antd';
+import { Button, Flex, Layout, Menu, MenuProps, theme } from 'antd';
 import { applyMapping, getChartColumns, verifyColumns } from "./utils";
 import { Mapping } from "./Mapping";
 import { Viewer } from "./View";
@@ -103,6 +103,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
 
     const [error, setError] = React.useState<string>(null);
     const [schema, setSchema] = React.useState<string>(JSON5.stringify(schemas['Current'] || schemas['Basic Line Chart'], null, " "));
+    console.log('schema', schema);
     const host = useAppSelector((state) => state.options.host);
 
     const chartGroups: MenuProps['items'] = Object.keys(chartTree).map(
@@ -232,7 +233,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                             >
                                 <Flex vertical={false}>
                                     <Button className="apply" onClick={onApplySchema}>Apply</Button>
-                                    <a className="docs-link" onClick={(e) => host.launchUrl('https://ilfat-galiev.im/docs/category/echarts-visual')}>Documentation</a>
+                                    <a className="docs-link" onClick={(e) => host.launchUrl('https://ilfat-galiev.im/docs/echarts-visual/')}>Documentation</a>
                                 </Flex>
                                 <h4>Preview</h4>
                                 <Viewer

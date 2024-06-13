@@ -56,7 +56,7 @@ export const Application: React.FC<ApplicationProps> = () => {
     }, [host])
 
     const template = React.useMemo(() => {
-        let charttmpl = JSON5.stringify(JSON5.parse(chart), null, " ")
+        let charttmpl = chart; //JSON5.stringify(JSON5.parse(chart), null, " ")
         charttmpl = charttmpl.replaceAll("\"{{{", "{{{")
         charttmpl = charttmpl.replaceAll("}}}\"", "}}}")
         return Handlebars.compile(charttmpl);

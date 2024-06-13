@@ -1,13 +1,14 @@
-import Handlebars from "handlebars";
+import Handlebars from "handlebars"
+import JSON5 from 'json5'
 
-import { format } from "d3-format";
-import { min, max, filter, median, mean, sum } from "d3-array";
+import { format } from "d3-format"
+import { min, max, filter, median, mean, sum } from "d3-array"
 
-import { utcFormat, timeFormat, utcParse } from "d3-time-format";
+import { utcFormat, timeFormat, utcParse } from "d3-time-format"
 
-import { select } from "d3-selection";
+import { select } from "d3-selection"
 
-import { axisBottom, axisLeft, axisRight, axisTop, Axis } from "d3-axis";
+import { axisBottom, axisLeft, axisRight, axisTop, Axis } from "d3-axis"
 
 import { 
     scaleLinear,

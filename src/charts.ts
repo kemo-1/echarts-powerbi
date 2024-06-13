@@ -546,13 +546,7 @@ export const schemas = {
         // adjust the start and end angle
         startAngle: 180,
         endAngle: 360,
-        data: [
-          { value: 1048, name: 'Search Engine' },
-          { value: 735, name: 'Direct' },
-          { value: 580, name: 'Email' },
-          { value: 484, name: 'Union Ads' },
-          { value: 300, name: 'Video Ads' }
-        ]
+        data: "{{{ jsonArray (map table.rows { value: this.[\" Sales\"], name: 'this.[\"Country\"]' },) }}}"
       }
     ]
   },
@@ -693,13 +687,11 @@ export const schemas = {
         labelLine: {
           show: false
         },
-        data: [
-          { value: 1048, name: 'Search Engine' },
-          { value: 735, name: 'Direct' },
-          { value: 580, name: 'Email' },
-          { value: 484, name: 'Union Ads' },
-          { value: 300, name: 'Video Ads' }
-        ]
+        data: `
+{{#each table.rows}}
+  {  value: {{this.[ Sales]}}, name: '{{this.[Country]}}' },\n
+{{/each}}
+`
       }
     ]
   },
@@ -720,13 +712,7 @@ export const schemas = {
         // adjust the start and end angle
         startAngle: 180,
         endAngle: 360,
-        data: [
-          { value: 1048, name: 'Search Engine' },
-          { value: 735, name: 'Direct' },
-          { value: 580, name: 'Email' },
-          { value: 484, name: 'Union Ads' },
-          { value: 300, name: 'Video Ads' }
-        ]
+        data: "{{{ jsonArray (map table.rows { value: this.[\" Sales\"], name: 'this.[\"Country\"]' },) }}}"
       }
     ]
   },
