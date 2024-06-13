@@ -1,24 +1,25 @@
 
-
-export const schemas = {
-  "Basic Line Chart": {
+export const schemas: {
+  [key: string]: Record<string, any> | string
+} = {
+  "Basic Line Chart": `{
     "dataset": {
       "dimensions": ["Country", " Sales"],
     },
     xAxis: {
       type: 'category',
-      "data": "{{{ column 'Country' }}}"
+      // HBT data: {{ column 'Country' }},
     },
     yAxis: {
       type: 'value'
     },
     series: [
       {
-        "data": "{{{ column ' Sales' }}}",
+        // HBT data: {{ column ' Sales' }},
         type: 'line'
       }
     ]
-  },
+  }`,
   "Smoothed Line Chart": {
     xAxis: {
       type: 'category',
@@ -529,7 +530,34 @@ export const schemas = {
       data: ['A', 'B', 'C']
     }
   },
-  'Half Pie Chart': {
+  'Half Pie Chart': `{
+    tooltip: {
+      trigger: 'item'
+    },
+    legend: {
+      top: '5%',
+      left: 'center'
+    },
+    series: [
+      {
+        name: 'Access From',
+        type: 'pie',
+        radius: ['0%', '70%'],
+        center: ['50%', '50%'],
+        // adjust the start and end angle
+        startAngle: 180,
+        endAngle: 360,
+        /* #HBT
+        data: [ 
+         {{#each table.rows}}
+         {  value: {{this.[ Sales]}}, name: '{{this.[Country]}}' },
+         {{/each}}
+         ]
+         */ 
+      }
+    ]
+  }`,
+  'Doughnut Chart': `{
     tooltip: {
       trigger: 'item'
     },
@@ -542,14 +570,32 @@ export const schemas = {
         name: 'Access From',
         type: 'pie',
         radius: ['40%', '70%'],
-        center: ['50%', '70%'],
-        // adjust the start and end angle
-        startAngle: 180,
-        endAngle: 360,
-        data: "{{{ jsonArray (map table.rows { value: this.[\" Sales\"], name: 'this.[\"Country\"]' },) }}}"
+        center: ['50%', '50%'],
+        avoidLabelOverlap: false,
+        label: {
+          show: false,
+          position: 'center'
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: 40,
+            fontWeight: 'bold'
+          }
+        },
+        labelLine: {
+          show: false
+        },
+        /* #HBT
+         data: [ 
+         {{#each table.rows}}
+         {  value: {{this.[ Sales]}}, name: '{{this.[Country]}}' },
+         {{/each}}
+         ]
+         */ 
       }
     ]
-  },
+  }`,
   'Scatter': {
     xAxis: {},
     yAxis: {},
@@ -659,7 +705,7 @@ export const schemas = {
       }
     ]
   },
-  'Doughnut Chart': {
+  'Half Doughnut Chart': `{
     tooltip: {
       trigger: 'item'
     },
@@ -672,50 +718,20 @@ export const schemas = {
         name: 'Access From',
         type: 'pie',
         radius: ['40%', '70%'],
-        avoidLabelOverlap: false,
-        label: {
-          show: false,
-          position: 'center'
-        },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: 40,
-            fontWeight: 'bold'
-          }
-        },
-        labelLine: {
-          show: false
-        },
-        data: `
-{{#each table.rows}}
-  {  value: {{this.[ Sales]}}, name: '{{this.[Country]}}' },\n
-{{/each}}
-`
-      }
-    ]
-  },
-  'Half Doughnut Chart': {
-    tooltip: {
-      trigger: 'item'
-    },
-    legend: {
-      top: '5%',
-      left: 'center'
-    },
-    series: [
-      {
-        name: 'Access From',
-        type: 'pie',
-        radius: ['40%', '70%'],
-        center: ['50%', '70%'],
+        center: ['50%', '50%'],
         // adjust the start and end angle
-        startAngle: 180,
-        endAngle: 360,
-        data: "{{{ jsonArray (map table.rows { value: this.[\" Sales\"], name: 'this.[\"Country\"]' },) }}}"
+        startAngle: 90,
+        endAngle: 180,
+        /* #HBT
+         data: [ 
+         {{#each table.rows}}
+         {  value: {{this.[ Sales]}}, name: '{{this.[Country]}}' },
+         {{/each}}
+         ]
+         */ 
       }
     ]
-  },
+  }`,
   'AQI - Radar': {
     backgroundColor: '#161627',
     title: {

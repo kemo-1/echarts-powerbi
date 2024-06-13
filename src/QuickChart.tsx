@@ -10,7 +10,7 @@ import DataView = powerbiApi.DataView;
 import { ErrorViewer } from "./Error";
 
 import { Button, Flex, Layout, Menu, MenuProps, theme } from 'antd';
-import { applyMapping, getChartColumns, verifyColumns } from "./utils";
+import { applyMapping, getChartColumns, verifyColumns, uncommentCodeComments } from "./utils";
 import { Mapping } from "./Mapping";
 import { Viewer } from "./View";
 
@@ -51,7 +51,8 @@ const chartTree = {
     ],
     'Pie': [
         'Doughnut Chart',
-        'Half Doughnut Chart'
+        'Half Doughnut Chart',
+        'Half Pie Chart',
     ],
     'Scatter': [
         'Scatter',
@@ -101,8 +102,10 @@ export interface QuickChartProps {
 /* eslintd-isable max-lines-per-function */
 export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: visualDataset, dataView, current, onSave }) => {
 
-    const [error, setError] = React.useState<string>(null);
-    const [schema, setSchema] = React.useState<string>(JSON5.stringify(schemas['Current'] || schemas['Basic Line Chart'], null, " "));
+    const [error] = React.useState<string>(null);
+    const defaultSchema = schemas['Current'] || schemas['Basic Line Chart'];
+    const isString = typeof defaultSchema == 'string';
+    const [schema, setSchema] = React.useState<string>(isString ? defaultSchema : JSON5.stringify(defaultSchema, null, " "));
     console.log('schema', schema);
     const host = useAppSelector((state) => state.options.host);
 
@@ -143,11 +146,8 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
     const viewport = useAppSelector((state) => state.options.viewport);
 
     const template = React.useMemo(() => {
-        let charttmpl = schema
-        charttmpl = charttmpl.replaceAll('"{{{', " {{{ ")
-        charttmpl = charttmpl.replaceAll('}}}"', " }}} ")
-        charttmpl = charttmpl.replaceAll('"{{', " {{")
-        charttmpl = charttmpl.replaceAll('}}"', "}} ")
+        debugger;
+        const charttmpl = uncommentCodeComments(schema);
         console.log('charttmpl quick chart', charttmpl);
         return Handlebars.compile(charttmpl);
     }, [schema])
@@ -216,8 +216,10 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                         setSchema(current);
                                     }
                                     else if (schemas[info.key]) {
-                                        draft.current = JSON5.stringify(schemas[info.key], null, " ");
-                                        setSchema(JSON5.stringify(schemas[info.key], null, " "));
+                                        debugger;
+                                        const isString = typeof schemas[info.key] == 'string';
+                                        draft.current = isString ? (schemas[info.key] as string) : JSON5.stringify(schemas[info.key], null, " ");
+                                        setSchema(draft.current);
                                     }
                                 }}
                             />

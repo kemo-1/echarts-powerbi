@@ -36,6 +36,21 @@ export function sanitizeHTML(dirty: string) {
     return sanitize(dirty, defaultDompurifyConfig) as string;
 }
 
+/** uncoments block and line  comments of string of code */
+export function uncommentCodeComments(code: string): string {
+    // Uncomment block comments (/* ... */)
+    code = code.replace(/\/\*\s#HBT([\s\S]*?)\*\//gm, '$1');
+
+    // Uncomment line comments (// ...)
+    code = code.replace(/\/\/\s#HBT\s(.*)/g, '$1');
+
+    return code;
+}
+
+export function replaceNewline(str: string): string {
+    return str.replace(/\\n/g, '\n');
+}
+
 export function safeParse(echartJson: string): any {
     let chart: any = {};
 
