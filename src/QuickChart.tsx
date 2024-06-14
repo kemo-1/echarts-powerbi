@@ -2,7 +2,7 @@
 import React from "react";
 import Handlebars from "handlebars";
 import JSON5 from 'json5'
-import * as echarts from "echarts";
+import * as echarts from 'echarts';
 
 import powerbiApi from "powerbi-visuals-api";
 import DataView = powerbiApi.DataView;
@@ -26,10 +26,11 @@ import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
 
-// import { transform } from 'echarts-stat';
-// echarts.registerTransform(transform.histogram);
+import { transform } from 'echarts-stat';
+echarts.registerTransform(transform.histogram);
+echarts.registerTransform(transform.clustering);
 
-const { Header, Content, Sider, Footer } = Layout;
+const { Content, Sider } = Layout;
 
 const chartTree = {
     'Current': [],
@@ -56,37 +57,49 @@ const chartTree = {
     ],
     'Scatter': [
         'Scatter',
+        // 'Clustering Process'
     ],
     'Candlestick': [
         'Basic Candlestick',
     ],
     'Radar': [
-        'Basic Radar Chart'
+        'Basic Radar Chart',
+        'AQI - Radar'
     ],
-    'Boxplot': [
-        'Basic Boxplot',
-    ],
+    // 'Boxplot': [
+    //     'Basic Boxplot',
+    // ],
     'Heatmap': [
         'Basic Heatmap'
     ],
-    'Tree': [
-        'Basic Tree',
-    ],
-    'Treemap': [
-        'Basic Treemap',
-    ],
-    'Sunburst': [
-        'Basic Sunburst',
-    ],
-    'Sankey': [
-        'Basic Sankey',
-    ],
-    'Funnel': [
-        'Basic Funnel',
-    ],
+    // 'Tree': [
+    //     'Basic Tree',
+    // ],
+    // 'Treemap': [
+    //     'Basic Treemap',
+    // ],
+    // 'Sunburst': [
+    //     'Basic Sunburst',
+    // ],
+    // 'Sankey': [
+    //     'Basic Sankey',
+    // ],
+    // 'Funnel': [
+    //     'Basic Funnel',
+    // ],
     'Gauge': [
         'Basic Gauge',
     ],
+    'Coming soon...': [
+        'Boxplot',
+        'Gauge',
+        'Funnel',
+        'Sankey',
+        'Sunburst',
+        'Treemap',
+        'Tree',
+        'Clustering Process'
+    ]
 }
 
 
@@ -126,6 +139,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                     return {
                         key: chart,
                         label: `${chart}`,
+                        disabled: group === 'Coming soon...',
                     };
                 }),
             };
@@ -146,7 +160,6 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
     const viewport = useAppSelector((state) => state.options.viewport);
 
     const template = React.useMemo(() => {
-        debugger;
         const charttmpl = uncommentCodeComments(schema);
         console.log('charttmpl quick chart', charttmpl);
         return Handlebars.compile(charttmpl);
@@ -216,7 +229,6 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                         setSchema(current);
                                     }
                                     else if (schemas[info.key]) {
-                                        debugger;
                                         const isString = typeof schemas[info.key] == 'string';
                                         draft.current = isString ? (schemas[info.key] as string) : JSON5.stringify(schemas[info.key], null, " ");
                                         setSchema(draft.current);

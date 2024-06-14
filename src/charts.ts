@@ -551,16 +551,11 @@ export const schemas: {
       }
     ]
   }`,
-  'Clustering Process': {
+  'Clustering Process': `{
     dataset: [
-      {
-        source: [],
-        dimensions: []
-      },
       {
         transform: {
           type: 'ecStat:clustering',
-          // print: true,
           config: {
             clusterCount: 6,
             outputType: 'single',
@@ -580,7 +575,17 @@ export const schemas: {
       left: 10,
       splitNumber: 6,
       dimension: 2,
-      pieces: []
+      pieces: [
+        /* HBT
+          {{#each table.rows}}
+          {
+            value: i,
+            label: 'cluster ' + i,
+            color: COLOR_ALL[i]
+          },
+          {{/each}}
+         */
+      ]
     },
     grid: {
       left: 120
@@ -589,66 +594,63 @@ export const schemas: {
     yAxis: {},
     series: {
       type: 'scatter',
-      encode: { tooltip: [0, 1] },
+      // HBT data: {{{ select ' Sales' 'Gross Sales' }}},
       symbolSize: 15,
       itemStyle: {
         borderColor: '#555'
       },
       datasetIndex: 1
     }
-  },
-  'Basic Candlestick': {
+  }`,
+  'Basic Candlestick': `{
     xAxis: {
-      data: ['2017-10-24', '2017-10-25', '2017-10-26', '2017-10-27']
+      // HBT data: {{{ column 'Country' }}},
     },
     yAxis: {},
     series: [
       {
         type: 'candlestick',
-        data: [
-          [20, 34, 10, 38],
-          [40, 35, 30, 50],
-          [31, 38, 33, 44],
-          [38, 15, 5, 42]
-        ]
+        // HBT data: {{{ select ' Sales' 'Gross Sales' }}},
       }
     ]
-  },
-  'Basic Radar Chart': {
+  }`,
+  'Basic Radar Chart': `{
     title: {
       text: 'Basic Radar Chart'
     },
     legend: {
-      data: ['Allocated Budget', 'Actual Spending']
+      data: ['Sales', 'Gross Sales']
     },
     radar: {
       // shape: 'circle',
       indicator: [
-        { name: 'Sales', max: 6500 },
-        { name: 'Administration', max: 16000 },
-        { name: 'Information Technology', max: 30000 },
-        { name: 'Customer Support', max: 38000 },
-        { name: 'Development', max: 52000 },
-        { name: 'Marketing', max: 25000 }
+        /* HBT
+          {{#each table.rows}}
+          {
+            max: 14000000,
+            name: '{{this.[Country]}}'
+          },
+          {{/each}}
+         */
       ]
     },
     series: [
       {
-        name: 'Budget vs spending',
+        name: 'Sales vs Gross Sales',
         type: 'radar',
         data: [
           {
-            value: [4200, 3000, 20000, 35000, 50000, 18000],
-            name: 'Allocated Budget'
+            // HBT value: {{{ column ' Sales' }}},
+            name: 'Sales'
           },
           {
-            value: [5000, 14000, 28000, 26000, 42000, 21000],
-            name: 'Actual Spending'
+            // HBT value: {{{ column 'Gross Sales' }}},
+            name: 'Gross Sales'
           }
         ]
       }
     ]
-  },
+  }`,
   'Half Doughnut Chart': `{
     tooltip: {
       trigger: 'item'
@@ -676,7 +678,7 @@ export const schemas: {
       }
     ]
   }`,
-  'AQI - Radar': {
+  'AQI - Radar': `{
     backgroundColor: '#161627',
     title: {
       text: 'AQI - Radar',
@@ -687,7 +689,7 @@ export const schemas: {
     },
     legend: {
       bottom: 5,
-      data: ['Beijing', 'Shanghai', 'Guangzhou'],
+      // HBT data: {{{ column 'Country' }}},
       itemGap: 20,
       textStyle: {
         color: '#fff',
@@ -697,12 +699,14 @@ export const schemas: {
     },
     radar: {
       indicator: [
-        { name: 'AQI', max: 300 },
-        { name: 'PM2.5', max: 250 },
-        { name: 'PM10', max: 300 },
-        { name: 'CO', max: 5 },
-        { name: 'NO2', max: 200 },
-        { name: 'SO2', max: 100 }
+        /* HBT
+          {{#each table.rows}}
+          {
+            max: 14000000,
+            name: '{{this.[Country]}}'
+          },
+          {{/each}}
+         */
       ],
       shape: 'circle',
       splitNumber: 5,
@@ -718,7 +722,7 @@ export const schemas: {
             'rgba(238, 197, 102, 0.6)',
             'rgba(238, 197, 102, 0.8)',
             'rgba(238, 197, 102, 1)'
-          ].reverse()
+          ]
         }
       },
       splitArea: {
@@ -731,8 +735,10 @@ export const schemas: {
       }
     },
     series: [
+      /* HBT
+      {{#each table.rows}}
       {
-        name: 'Beijing',
+        name: "{{this.[Country]}}",
         type: 'radar',
         lineStyle: {
           width: 1,
@@ -741,46 +747,16 @@ export const schemas: {
         data: [],
         symbol: 'none',
         itemStyle: {
-          color: '#F9713C'
+          color: "{{ useColor this.[Country] }}"
         },
         areaStyle: {
           opacity: 0.1
         }
       },
-      {
-        name: 'Shanghai',
-        type: 'radar',
-        lineStyle: {
-          width: 1,
-          opacity: 0.5
-        },
-        data: [],
-        symbol: 'none',
-        itemStyle: {
-          color: '#B3E4A1'
-        },
-        areaStyle: {
-          opacity: 0.05
-        }
-      },
-      {
-        name: 'Guangzhou',
-        type: 'radar',
-        lineStyle: {
-          width: 1,
-          opacity: 0.5
-        },
-        data: [],
-        symbol: 'none',
-        itemStyle: {
-          color: 'rgb(238, 197, 102)'
-        },
-        areaStyle: {
-          opacity: 0.05
-        }
-      }
+      {{/each}}
+      */
     ]
-  },
+  }`,
   'Basic Boxplot': {
     title: [
       {
@@ -864,7 +840,7 @@ export const schemas: {
       }
     ]
   },
-  'Basic Heatmap': {
+  'Basic Heatmap': `{
     tooltip: {
       position: 'top'
     },
@@ -874,14 +850,14 @@ export const schemas: {
     },
     xAxis: {
       type: 'category',
-      "data": "{{{ jsonArray (map table.rows 'Country') }}}",
+      // HBT data: {{{ column 'Country' }}},
       splitArea: {
         show: true
       }
     },
     yAxis: {
       type: 'category',
-      "data": "{{{ jsonArray (map table.rows 'Segment') }}}",
+      // HBT data: {{{ column 'Segment' }}},
       splitArea: {
         show: true
       }
@@ -898,7 +874,7 @@ export const schemas: {
       {
         name: 'Punch Card',
         type: 'heatmap',
-        "data": "{{{ jsonArray (map table.rows ' Sales') }}}",
+        // HBT data: {{{ column ' Sales' }}},
         label: {
           show: true
         },
@@ -910,7 +886,7 @@ export const schemas: {
         }
       }
     ]
-  },
+  }`,
   'Basic Tree': {
     tooltip: {
       trigger: 'item',
