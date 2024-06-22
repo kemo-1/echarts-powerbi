@@ -3,6 +3,8 @@ import VisualUpdateOptions = powerbiVisualsApi.extensibility.visual.VisualUpdate
 import DataView = powerbiVisualsApi.DataView;
 import IVisualHost = powerbiVisualsApi.extensibility.visual.IVisualHost
 import IViewport = powerbiVisualsApi.IViewport;
+import ISelectionManager = powerbiVisualsApi.extensibility.ISelectionManager;
+
 
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -12,6 +14,7 @@ import { EChartOption } from "echarts";
 
 export interface VisualState {
     host: IVisualHost;
+    selectionManager: ISelectionManager;
     options: VisualUpdateOptions;
     settings: IVisualSettings;
     viewport: IViewport;
@@ -23,6 +26,7 @@ export interface VisualState {
 
 const initialState: VisualState = {
     host: undefined,
+    selectionManager: undefined,
     options: undefined,
     settings: VisualSettings.getDefault() as VisualSettings,
     dataset: {},
@@ -44,6 +48,7 @@ export const slice = createSlice({
     reducers: {
         setHost: (state, action: PayloadAction<IVisualHost>) => {
             state.host = action.payload
+            state.selectionManager = state.host.createSelectionManager();
         },
         setOptions: (state, action: PayloadAction<VisualUpdateOptions>) => {
             state.options = action.payload;
@@ -52,7 +57,7 @@ export const slice = createSlice({
             }
             state.dataView = state.options.dataViews[0];
             state.dataset = createDataset(state.dataView);
-            state.table = convertData(state.dataView);
+            state.table = convertData(state.dataView, state.host);
             const chartColumns = getChartColumns(state.settings.chart.echart);
             state.unmappedColumns = chartColumns && state.dataView.metadata.columns ? verifyColumns(state.settings.chart.echart, chartColumns, state.dataView.metadata.columns) : [];
         },

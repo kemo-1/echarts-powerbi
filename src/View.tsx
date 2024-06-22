@@ -6,6 +6,9 @@ import { ErrorViewer } from "./Error";
 import Layout from "antd/es/layout/layout";
 
 export interface ViewerProps {
+    onClick?: (params: any) => void;
+    onMouseOver?: (params: any) => void;
+    onMouseOut?: (params: any) => void;
     width: number;
     height: number;
     // echart?: echarts.EChartOption;
@@ -14,7 +17,7 @@ export interface ViewerProps {
 }
 
 /* eslint-disable max-lines-per-function */
-export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, dataset }) => {
+export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, dataset, onClick, onMouseOver, onMouseOut }) => {
 
     const mainDiv = React.useRef<HTMLDivElement>();
     const chartInstance = React.useRef<echarts.EChartsType>();
@@ -46,11 +49,21 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
             });
 
             chartInstance.current.on("click", (params) => {
-                console.log('click', params, dataset);
+                if (onClick) {
+                    onClick(params);
+                }
             });
 
             chartInstance.current.on("mouseover", (params) => {
-                console.log('mouseover', params, dataset);
+                if (onMouseOver) {
+                    onMouseOver(params);
+                }
+            });
+
+            chartInstance.current.on("mouseout", (params) => {
+                if (onMouseOut) {
+                    onMouseOut(params);
+                }
             });
         }
         catch(e) {

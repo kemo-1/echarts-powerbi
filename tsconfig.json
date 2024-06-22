@@ -25,6 +25,7 @@
         "src/visual.ts",
     ],
     "include": [
+        "src/types.d.ts",
         "src/svg.d.ts"
     ]
 }

@@ -16,6 +16,7 @@ import { applyMapping } from './utils';
 
 import { hardReset, registerGlobal } from "./handlebars/helpers"
 import { sanitizeHTML } from './utils'
+import { helper } from 'echarts';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ApplicationProps {
@@ -27,6 +28,7 @@ export const Application: React.FC<ApplicationProps> = () => {
     const settings = useAppSelector((state) => state.options.settings);
     const option = useAppSelector((state) => state.options.options);
     const host = useAppSelector((state) => state.options.host);
+    const selectionManager = useAppSelector((state) => state.options.selectionManager);
 
     const dataView = useAppSelector((state) => state.options.dataView);
     const viewport = useAppSelector((state) => state.options.viewport);
@@ -90,6 +92,31 @@ export const Application: React.FC<ApplicationProps> = () => {
         }
     }, [host, table, viewport, template])
 
+    const onClickHandler = React.useCallback((params) => {
+        selectionManager?.select(table.rows[params.dataIndex].selection, params.event.ctrlKey || params.event.metaKey);
+    }, [host, table, dataset]);
+
+    const onMouseOverHandler = React.useCallback((params) => {
+        host.tooltipService.hide({ immediately: true, isTouchEvent: false });
+        host.tooltipService.show({
+            coordinates: [params.event.offsetX, params.event.offsetY],
+            dataItems: params.dimensionNames.map((dm, index) => ({
+                header: params.name ,
+                displayName: dm,
+                value: params.data[index],
+
+            })),
+            isTouchEvent: false,
+            identities: [
+                table.rows[params.dataIndex].selection
+            ],
+        });
+    }, [host, table, dataset]);
+
+    const onMouseOutHandler = React.useCallback(() => {
+        host.tooltipService.hide({ immediately: false, isTouchEvent: false});
+    }, [host, table, dataset]);
+
     if (!option || !settings) {
         return (<h1>Loading...</h1>)
     }
@@ -147,6 +174,9 @@ export const Application: React.FC<ApplicationProps> = () => {
             return (
                 <>
                     <Viewer
+                        onClick={onClickHandler}
+                        onMouseOver={onMouseOverHandler}
+                        onMouseOut={onMouseOutHandler}
                         dataset={dataset}
                         height={option.viewport.height}
                         width={option.viewport.width}
