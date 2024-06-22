@@ -18,6 +18,21 @@
     font-size: 12px;
 }
 
+.docs-link {
+    color: blue;
+    text-decoration: underline;
+    margin-top: 10px;
+    margin-left: 5px;
+}
+
+.apply {
+    margin-top: 5px;
+}
+
+.hidden {
+    display: none;
+}
+
 .errorView {
     overflow-y: scroll;
     display: flex;
@@ -41,6 +56,6 @@
 
     .json {
         margin: 10px;
-        user-select: auto;
+        user-select: all;
     }
 }

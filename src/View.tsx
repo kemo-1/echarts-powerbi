@@ -1,11 +1,14 @@
 import React from "react";
-
+import JSON5 from 'json5'
 import * as echarts from "echarts";
 
 import { ErrorViewer } from "./Error";
 import Layout from "antd/es/layout/layout";
 
 export interface ViewerProps {
+    onClick?: (params: any) => void;
+    onMouseOver?: (params: any) => void;
+    onMouseOut?: (params: any) => void;
     width: number;
     height: number;
     // echart?: echarts.EChartOption;
@@ -14,40 +17,53 @@ export interface ViewerProps {
 }
 
 /* eslint-disable max-lines-per-function */
-export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, dataset }) => {
+export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, dataset, onClick, onMouseOver, onMouseOut }) => {
 
     const mainDiv = React.useRef<HTMLDivElement>();
     const chartInstance = React.useRef<echarts.EChartsType>();
     const echart = React.useRef<echarts.EChartOption>({});
     
     const [error, setError] = React.useState<string>(null);
+    const [parsingError, setParsingError] = React.useState<string>(null);
 
     // Parse chart options
     React.useEffect(() => {
         try {
-            echart.current = JSON.parse(echartJSON);
+            setParsingError(null);
+            echart.current = JSON5.parse(echartJSON);
             echart.current.dataset = dataset;
         } catch(e) {
-            setError(e.message);
+            setParsingError(e.message);
             console.error(e);
             echart.current = {};
         }
-    }, [echartJSON, dataset]);
+    }, [echartJSON, dataset, setParsingError]);
 
     // Create the echarts instance
     React.useEffect(() => {
         try {
+            setError(null);
             chartInstance.current = echarts.init(mainDiv.current, null, {
                 height,
                 width,
             });
 
             chartInstance.current.on("click", (params) => {
-                console.log('click', params, dataset);
+                if (onClick) {
+                    onClick(params);
+                }
             });
 
             chartInstance.current.on("mouseover", (params) => {
-                console.log('mouseover', params, dataset);
+                if (onMouseOver) {
+                    onMouseOver(params);
+                }
+            });
+
+            chartInstance.current.on("mouseout", (params) => {
+                if (onMouseOut) {
+                    onMouseOut(params);
+                }
             });
         }
         catch(e) {
@@ -59,7 +75,7 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
         return () => {
             chartInstance.current.dispose();
         };
-    }, [echartJSON]);
+    }, [echartJSON, setError]);
 
     // Draw the chart
     React.useEffect(() => {
@@ -69,7 +85,7 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
             setError(e.message);
             console.log('parse error', e);
         }
-    }, [echart, chartInstance, dataset, echartJSON]);
+    }, [echart, chartInstance, dataset, echartJSON, setError]);
 
     // handle resize
     React.useEffect(() => {
@@ -81,25 +97,26 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
 
     return (
         <>
+            {parsingError ? (
+            <>
+                <ErrorViewer error={parsingError} height={height} width={width} json={echartJSON}/>
+            </>
+            ) : null }
             {error ? (
             <>
                 <ErrorViewer error={error} height={height} width={width} json={echartJSON}/>
             </>
-            ) : (
-            <>
-                <Layout style={{backgroundColor: 'transparent'}}>
-                    <div
-                        ref={mainDiv}
-                        id="main"
-                        style={{
-                            height: `${height}px`,
-                            width: `${width}px`,
-                        }}
-                    ></div>
-                </Layout>
-            </>
-            )}
-            
+            ) : null }
+            <Layout className={parsingError || error ? "hidden" : ""} style={{backgroundColor: 'transparent'}}>
+                <div
+                    ref={mainDiv}
+                    id="main"
+                    style={{
+                        height: `${height}px`,
+                        width: `${width}px`,
+                    }}
+                ></div>
+            </Layout>
         </>
     );
 };

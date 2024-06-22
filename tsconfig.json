@@ -12,6 +12,7 @@
         "esModuleInterop": true,
         "lib": [
             "es2015",
+            "es2021",
             "dom"
         ],
         "jsx": "react",
@@ -24,6 +25,7 @@
         "src/visual.ts",
     ],
     "include": [
+        "src/types.d.ts",
         "src/svg.d.ts"
     ]
 }
