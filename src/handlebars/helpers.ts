@@ -160,41 +160,8 @@ Handlebars.registerHelper('array', (...options) => {
     return options
 })
 
-Handlebars.registerHelper('jsonArray', (...options) => {
-    options.pop()
-    const arr = options.pop();
-    return "[" + arr.map(i => `"${i}"`).join(",") + "]";
-})
-
 Handlebars.registerHelper('map', (array, key) => {
     return array.map(o => o[key]);
-})
-
-Handlebars.registerHelper('column', (name) => {
-    const table: Table = globals.get('table') as Table
-    const found = table.columns.find(c => c.displayName == name)
-    if (found) {
-        const column = table.rows.map(r => r[name]);
-        return "[" + column.map(i => `"${i}"`).join(",") + "]"
-    } else {
-        return `Column "${name}" not found`
-    }
-})
-
-Handlebars.registerHelper('select', (...options) => {
-    options.pop()
-    const table: Table = globals.get('table') as Table
-    const columnNames = options
-    const notFoundColumns = columnNames.filter(c => !table.columns.find(cc => cc.displayName == c));
-    if (notFoundColumns.length > 0) {
-        return `Column "${notFoundColumns.join(',')}" not found`
-    } else {
-        const column = table.rows.map(r => {
-            const data = columnNames.map(names => r[names])
-            return "[" + data.map(i => `"${i}"`).join(",") + "]"
-        });
-        return "[" + column.map(i => `${i}`).join(",") + "]"
-    }
 })
 
 Handlebars.registerHelper('min', (array) => {
@@ -354,4 +321,37 @@ Handlebars.registerHelper('math', function (
     } else {
         return Math[method]
     }
+})
+
+Handlebars.registerHelper('column', (name) => {
+    const table: Table = globals.get('table') as Table
+    const found = table.columns.find(c => c.displayName == name)
+    if (found) {
+        const column = table.rows.map(r => r[name]);
+        return "[" + column.map(i => `"${i}"`).join(",") + "]"
+    } else {
+        return `Column "${name}" not found`
+    }
+})
+
+Handlebars.registerHelper('select', (...options) => {
+    options.pop()
+    const table: Table = globals.get('table') as Table
+    const columnNames = options
+    const notFoundColumns = columnNames.filter(c => !table.columns.find(cc => cc.displayName == c));
+    if (notFoundColumns.length > 0) {
+        return `Column "${notFoundColumns.join(',')}" not found`
+    } else {
+        const column = table.rows.map(r => {
+            const data = columnNames.map(names => r[names])
+            return "[" + data.map(i => `"${i}"`).join(",") + "]"
+        });
+        return "[" + column.map(i => `${i}`).join(",") + "]"
+    }
+})
+
+Handlebars.registerHelper('jsonArray', (...options) => {
+    options.pop()
+    const arr = options.pop();
+    return "[" + arr.map(i => `"${i}"`).join(",") + "]";
 })

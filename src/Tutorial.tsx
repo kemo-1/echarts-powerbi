@@ -48,20 +48,20 @@ export const Tutorial: React.FC<TutorialProps> = ({ height, width, host }) => {
                     <div className="home-subtitle">An Open Source JavaScript Visualization Library</div>
                     <div className="home-btn-panel">
                         <a href="#" className="btn btn-main btn-index-home" onClick={(e) => {
-                            host.launchUrl("https://echarts.apache.org/en/index.html");
-                            e.stopPropagation();
-                            e.preventDefault();
-                        }}>
-                            Apache ECharts Documentation
-                        </a>
-                    </div>
-                    <div className="home-btn-panel">
-                        <a href="#" className="btn btn-main btn-index-home" onClick={(e) => {
                             host.launchUrl("https://ilfat-galiev.im/docs/echarts-visual/");
                             e.stopPropagation();
                             e.preventDefault();
                         }}>
                             Apache ECharts Visual Documentation
+                        </a>
+                    </div>
+                    <div className="home-btn-panel">
+                        <a href="#" className="btn btn-main btn-index-home" onClick={(e) => {
+                            host.launchUrl("https://echarts.apache.org/en/index.html");
+                            e.stopPropagation();
+                            e.preventDefault();
+                        }}>
+                            Apache ECharts Documentation
                         </a>
                     </div>
                 </div>

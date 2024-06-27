@@ -161,7 +161,6 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
 
     const template = React.useMemo(() => {
         const charttmpl = uncommentCodeComments(schema);
-        console.log('charttmpl quick chart', charttmpl);
         return Handlebars.compile(charttmpl);
     }, [schema])
 

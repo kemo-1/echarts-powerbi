@@ -12,7 +12,7 @@ import JSON5 from 'json5'
 import { useAppSelector, useAppDispatch } from './redux/hooks';
 import { setSettings, reVerifyColumns } from './redux/slice';
 import { IVisualSettings } from './settings';
-import { applyMapping } from './utils';
+import { applyMapping, uncommentCodeComments } from './utils';
 
 import { hardReset, registerGlobal } from "./handlebars/helpers"
 import { sanitizeHTML } from './utils'
@@ -58,11 +58,9 @@ export const Application: React.FC<ApplicationProps> = () => {
     }, [host])
 
     const template = React.useMemo(() => {
-        let charttmpl = chart; //JSON5.stringify(JSON5.parse(chart), null, " ")
-        charttmpl = charttmpl.replaceAll("\"{{{", "{{{")
-        charttmpl = charttmpl.replaceAll("}}}\"", "}}}")
+        const charttmpl = uncommentCodeComments(chart);
         return Handlebars.compile(charttmpl);
-    }, [chart])
+    }, [chart, settings])
 
     const content = React.useMemo(() => {
         hardReset()
@@ -90,7 +88,7 @@ export const Application: React.FC<ApplicationProps> = () => {
         } catch (err) {
             return `<h4>${err.message}</h4><pre>${err.stack}</pre>`
         }
-    }, [host, table, viewport, template])
+    }, [host, table, viewport, template, settings])
 
     const onClickHandler = React.useCallback((params) => {
         selectionManager?.select(table.rows[params.dataIndex].selection, params.event.ctrlKey || params.event.metaKey);
@@ -121,8 +119,7 @@ export const Application: React.FC<ApplicationProps> = () => {
         return (<h1>Loading...</h1>)
     }
 
-    if (option.editMode === powerbiApi.EditMode.Advanced ||
-        (content === '{}' && dataView && dataset)) {
+    if (option.editMode === powerbiApi.EditMode.Advanced && dataView && dataView.categorical) {
         return (
             <QuickChart
                 dataset={dataset}
@@ -131,32 +128,32 @@ export const Application: React.FC<ApplicationProps> = () => {
                 dataView={dataView}
                 current={chart}
                 onSave={(json) => {
-                    persistProperty(json);
                     const newSettings: IVisualSettings = JSON5.parse(JSON5.stringify(settings));
                     newSettings.chart.echart = json;
                     dispatch(setSettings(newSettings));
+                    persistProperty(json);
                 }}
             />
         );
     }
 
-    if (option && unmappedColumns.length) {
-        return (
-            <Mapping
-                dataView={dataView}
-                dataset={dataset}
-                unmappedColumns={unmappedColumns}
-                onSaveMapping={(mapping) => {
-                    const mappedJSON = applyMapping(settings.chart.echart, mapping, dataset);
-                    const newSettings: IVisualSettings = JSON5.parse(JSON5.stringify(settings));
-                    newSettings.chart.echart = mappedJSON;
-                    dispatch(setSettings(newSettings));
-                    dispatch(reVerifyColumns());
-                    persistProperty(mappedJSON);
-                }}
-            />
-        )
-    }
+    // if (option && unmappedColumns.length) {
+    //     return (
+    //         <Mapping
+    //             dataView={dataView}
+    //             dataset={dataset}
+    //             unmappedColumns={unmappedColumns}
+    //             onSaveMapping={(mapping) => {
+    //                 const mappedJSON = applyMapping(settings.chart.echart, mapping, dataset);
+    //                 const newSettings: IVisualSettings = JSON5.parse(JSON5.stringify(settings));
+    //                 newSettings.chart.echart = mappedJSON;
+    //                 dispatch(setSettings(newSettings));
+    //                 dispatch(reVerifyColumns());
+    //                 persistProperty(mappedJSON);
+    //             }}
+    //         />
+    //     )
+    // }
 
     if (!dataView || !dataView.categorical) {
         const categorical = dataView?.categorical;
@@ -166,6 +163,7 @@ export const Application: React.FC<ApplicationProps> = () => {
                     height={option.viewport.height}
                     width={option.viewport.width}
                     dataset={dataset}
+                    host={host}
                 />
             )
         }
