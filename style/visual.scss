@@ -4,6 +4,7 @@
 
 .toolbar {
     margin-bottom: 2px;
+
     button {
         margin: 2px;
     }
@@ -57,5 +58,120 @@
     .json {
         margin: 10px;
         user-select: all;
+    }
+}
+
+.tutorial {
+    .apache-echart-logo {
+        position: relative;
+    }
+
+    .home-brand {
+        font-size: 75px;
+        font-weight: 800;
+        color: #081642;
+        line-height: 1.2em
+    }
+
+    .home-subtitle {
+        font-size: 21px;
+        color: #1d2b5a;
+        margin-top: 15px
+    }
+
+    .zr0-cls-0 {
+        animation: zr0-ani-0 0.5s cubic-bezier(0.33, 1, 0.68, 1) 0.5s both;
+    }
+
+    .zr0-cls-1 {
+        animation: zr0-ani-1 0.5s cubic-bezier(0.33, 1, 0.68, 1) 0.4375s both;
+    }
+
+    .zr0-cls-2 {
+        animation: zr0-ani-2 0.5s cubic-bezier(0.33, 1, 0.68, 1) 0.375s both;
+    }
+
+    .zr0-cls-3 {
+        animation: zr0-ani-3 0.5s cubic-bezier(0.33, 1, 0.68, 1) 0.3125s both;
+    }
+
+    .zr0-cls-4 {
+        animation: zr0-ani-4 0.5s cubic-bezier(0.33, 1, 0.68, 1) 0.25s both;
+    }
+
+    .zr0-cls-5 {
+        animation: zr0-ani-5 0.5s cubic-bezier(0.33, 1, 0.68, 1) 0.1875s both;
+    }
+
+    .zr0-cls-6 {
+        animation: zr0-ani-6 0.5s cubic-bezier(0.33, 1, 0.68, 1) 0.125s both;
+    }
+
+    .zr0-cls-7 {
+        animation: zr0-ani-7 0.5s cubic-bezier(0.33, 1, 0.68, 1) 0.0625s both;
+    }
+
+    @keyframes zr0-ani-0 {
+        0% {
+            transform: scale(0, 0);
+        }
+
+        100% {}
+    }
+
+    @keyframes zr0-ani-1 {
+        0% {
+            transform: scale(0, 0);
+        }
+
+        100% {}
+    }
+
+    @keyframes zr0-ani-2 {
+        0% {
+            transform: scale(0, 0);
+        }
+
+        100% {}
+    }
+
+    @keyframes zr0-ani-3 {
+        0% {
+            transform: scale(0, 0);
+        }
+
+        100% {}
+    }
+
+    @keyframes zr0-ani-4 {
+        0% {
+            transform: scale(0, 0);
+        }
+
+        100% {}
+    }
+
+    @keyframes zr0-ani-5 {
+        0% {
+            transform: scale(0, 0);
+        }
+
+        100% {}
+    }
+
+    @keyframes zr0-ani-6 {
+        0% {
+            transform: scale(0, 0);
+        }
+
+        100% {}
+    }
+
+    @keyframes zr0-ani-7 {
+        0% {
+            transform: scale(0, 0);
+        }
+
+        100% {}
     }
 }
