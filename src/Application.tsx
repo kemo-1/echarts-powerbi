@@ -119,7 +119,7 @@ export const Application: React.FC<ApplicationProps> = () => {
         return (<h1>Loading...</h1>)
     }
 
-    if (option.editMode === powerbiApi.EditMode.Advanced && dataView && dataView.categorical) {
+    if (option.editMode === powerbiApi.EditMode.Advanced && dataView && dataView.table) {
         return (
             <QuickChart
                 dataset={dataset}
@@ -167,21 +167,19 @@ export const Application: React.FC<ApplicationProps> = () => {
                 />
             )
         }
-
-        if (settings) {
-            return (
-                <>
-                    <Viewer
-                        onClick={onClickHandler}
-                        onMouseOver={onMouseOverHandler}
-                        onMouseOut={onMouseOutHandler}
-                        dataset={dataset}
-                        height={option.viewport.height}
-                        width={option.viewport.width}
-                        echartJSON={content}
-                    />
-                </>
-            );
-        }
     }
+
+    return (
+        <>
+            <Viewer
+                onClick={onClickHandler}
+                onMouseOver={onMouseOverHandler}
+                onMouseOut={onMouseOutHandler}
+                dataset={dataset}
+                height={option.viewport.height}
+                width={option.viewport.width}
+                echartJSON={content}
+            />
+        </>
+    );
 }

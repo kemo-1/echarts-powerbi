@@ -209,65 +209,70 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
             ) : (
                 <>
                     <Layout style={{ height: '100%', background: 'transparent'}}>
-                        <Sider width={200} style={{ background: colorBgContainer, overflowY: 'scroll' }}>
-                            <Button style={{width: '100%', marginBottom: '10px'}} type="primary" onClick={() => {
-                                setSchema(draft.current);
-                                onSave(draft.current);
-                            }}>
-                                Save
-                            </Button>
-                            <Menu
-                                mode="inline"
-                                defaultSelectedKeys={['1']}
-                                defaultOpenKeys={['sub1']}
-                                style={{ height: '100%', borderRight: 0 }}
-                                items={chartGroups}
-                                onClick={(info) => {
-                                    if (info.key === 'Current') {
-                                        draft.current = current;
-                                        setSchema(current);
-                                    }
-                                    else if (schemas[info.key]) {
-                                        const isString = typeof schemas[info.key] == 'string';
-                                        draft.current = isString ? (schemas[info.key] as string) : JSON5.stringify(schemas[info.key], null, " ");
-                                        setSchema(draft.current);
-                                    }
-                                }}
-                            />
+                        <Sider className="card" width={200} style={{ background: colorBgContainer, overflowY: 'scroll' }}>
+                                <Menu
+                                    mode="inline"
+                                    defaultSelectedKeys={['1']}
+                                    defaultOpenKeys={['sub1']}
+                                    style={{ height: '100%', borderRight: 0 }}
+                                    items={chartGroups}
+                                    onClick={(info) => {
+                                        if (info.key === 'Current') {
+                                            draft.current = current;
+                                            setSchema(current);
+                                        }
+                                        else if (schemas[info.key]) {
+                                            const isString = typeof schemas[info.key] == 'string';
+                                            draft.current = isString ? (schemas[info.key] as string) : JSON5.stringify(schemas[info.key], null, " ");
+                                            setSchema(draft.current);
+                                        }
+                                    }}
+                                />
                         </Sider>
                         <Layout style={{ padding: '0 0 15px 0', overflowY: 'auto', background: 'transparent' }}>
                             <Content
                                 style={{
-                                    padding: 24,
+                                    padding: 5,
                                     margin: 0,
                                     minHeight: 280,
                                     background: colorBgContainer,
                                 }}
                             >
-                                <Flex vertical={false}>
-                                    <Button className="apply" onClick={onApplySchema}>Apply</Button>
-                                    <a className="docs-link" onClick={(e) => host.launchUrl('https://ilfat-galiev.im/docs/echarts-visual/')}>Documentation</a>
-                                </Flex>
-                                <h4>Preview</h4>
-                                <Viewer
-                                    dataset={dataset}
-                                    height={height * (9/10)}
-                                    width={width - 300}
-                                    echartJSON={content}
-                                />
-                                {unmappedColumns.length ? (<>
-                                    <h4>Mapping</h4>
-                                    <Mapping
-                                        dataView={dataView}
-                                        dataset={visualDataset}
-                                        unmappedColumns={unmappedColumns}
-                                        onSaveMapping={(mapping) => {
-                                            const mappedJSON = applyMapping(schema, mapping, visualDataset);
-                                            setSchema(mappedJSON);
-                                        }}
+                                <div className="card">
+                                    <Flex vertical={false}>
+                                        <Button type="primary" onClick={() => {
+                                            setSchema(draft.current);
+                                            onSave(draft.current);
+                                        }}>
+                                            Save
+                                        </Button>
+                                        <Button className="apply" onClick={onApplySchema}>Apply</Button>
+                                        <a className="docs-link" onClick={(e) => host.launchUrl('https://ilfat-galiev.im/docs/echarts-visual/')}>Documentation</a>
+                                    </Flex>
+                                </div>
+                                <div className="card">
+                                    <h4 className="card-title">Preview</h4>
+                                    <Viewer
+                                        dataset={dataset}
+                                        height={height * (9/10)}
+                                        width={width - 300}
+                                        echartJSON={content}
                                     />
-                                </>) : null}
-                                <h4>Configuration</h4>
+                                    {unmappedColumns.length ? (<>
+                                        <h4>Mapping</h4>
+                                        <Mapping
+                                            dataView={dataView}
+                                            dataset={visualDataset}
+                                            unmappedColumns={unmappedColumns}
+                                            onSaveMapping={(mapping) => {
+                                                const mappedJSON = applyMapping(schema, mapping, visualDataset);
+                                                setSchema(mappedJSON);
+                                            }}
+                                        />
+                                    </>) : null}
+                                </div>
+                                <div className="card">
+                                <h4 className="card-title">Configuration</h4>
                                 <AceEditor
                                     width="100%"
                                     height={`${height * (9/10)}px`}
@@ -283,6 +288,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                     name="CONFIGURATION_ID"
                                     editorProps={{ $blockScrolling: true }}
                                 />
+                                </div>
                             </Content>
                         </Layout>
                     </Layout>
