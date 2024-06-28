@@ -15,6 +15,7 @@ export const schemas: {
     },
     series: [
       {
+        name: ' Sales',
         // HBT data: {{{ column ' Sales' }}},
         type: 'line'
       }
@@ -30,6 +31,7 @@ export const schemas: {
     },
     series: [
       {
+        name: ' Sales',
         // HBT data: {{{ jsonArray (map table.rows ' Sales') }}},
         type: 'line',
         smooth: true
@@ -47,6 +49,7 @@ export const schemas: {
     },
     series: [
       {
+        name: ' Sales',
         // HBT data: {{{ jsonArray (map table.rows ' Sales') }}},
         type: 'line',
         areaStyle: {}
@@ -169,6 +172,7 @@ export const schemas: {
     },
     series: [
       {
+        name: ' Sales',
         // HBT data: {{{ column ' Sales' }}},
         type: 'bar'
       }
@@ -184,6 +188,7 @@ export const schemas: {
     },
     series: [
       {
+        name: ' Sales',
         // HBT data: {{{ column ' Sales' }}},
         type: 'bar',
         showBackground: true,
@@ -222,7 +227,7 @@ export const schemas: {
     ],
     series: [
       {
-        name: 'Direct',
+        name: ' Sales',
         type: 'bar',
         barWidth: '60%',
         // HBT data: {{{ column ' Sales' }}},
@@ -255,7 +260,7 @@ export const schemas: {
     },
     series: [
       {
-        name: 'Placeholder',
+        name: ' Sales',
         type: 'bar',
         stack: 'Total',
         itemStyle: {
@@ -271,7 +276,7 @@ export const schemas: {
         // HBT data: {{{ column ' Sales' }}}
       },
       {
-        name: 'Life Cost',
+        name: 'Gross Sales',
         type: 'bar',
         stack: 'Total',
         label: {
@@ -315,7 +320,7 @@ export const schemas: {
     },
     series: [
       {
-        name: 'Cost',
+        name: ' Sales',
         type: 'bar',
         stack: 'Total',
         label: {
@@ -372,7 +377,7 @@ export const schemas: {
     ],
     series: [
       {
-        name: 'Sales',
+        name: ' Sales',
         type: 'bar',
         barGap: 0,
         emphasis: {
@@ -414,7 +419,7 @@ export const schemas: {
     },
     series: [
       {
-        name: 'Sales',
+        name: ' Sales',
         type: 'bar',
         stack: 'total',
         label: {
@@ -452,7 +457,7 @@ export const schemas: {
         type: 'bar',
         // HBT data: {{{ column ' Sales' }}},
         coordinateSystem: 'polar',
-        name: 'A',
+        name: 'Sales',
         stack: 'a',
         emphasis: {
           focus: 'series'
@@ -462,7 +467,7 @@ export const schemas: {
         type: 'bar',
         // HBT data: {{{ column 'Gross Sales' }}},
         coordinateSystem: 'polar',
-        name: 'B',
+        name: 'Gross Sales',
         stack: 'a',
         emphasis: {
           focus: 'series'
@@ -484,7 +489,7 @@ export const schemas: {
     },
     series: [
       {
-        name: 'Access From',
+        name: ' Sales',
         type: 'pie',
         radius: ['0%', '70%'],
         center: ['50%', '50%'],
@@ -511,7 +516,7 @@ export const schemas: {
     },
     series: [
       {
-        name: 'Access From',
+        name: ' Sales',
         type: 'pie',
         radius: ['40%', '70%'],
         center: ['50%', '50%'],
@@ -545,6 +550,7 @@ export const schemas: {
     yAxis: {},
     series: [
       {
+        name: ' Sales and Gross Sales',
         symbolSize: 20,
         // HBT data: {{{ select ' Sales' 'Gross Sales' }}},
         type: 'scatter'
@@ -593,6 +599,7 @@ export const schemas: {
     xAxis: {},
     yAxis: {},
     series: {
+      name: ' Sales and Gross Sales',
       type: 'scatter',
       // HBT data: {{{ select ' Sales' 'Gross Sales' }}},
       symbolSize: 15,
@@ -609,6 +616,7 @@ export const schemas: {
     yAxis: {},
     series: [
       {
+        name: ' Sales and Gross Sales',
         type: 'candlestick',
         // HBT data: {{{ select ' Sales' 'Gross Sales' }}},
       }
@@ -661,7 +669,7 @@ export const schemas: {
     },
     series: [
       {
-        name: 'Access From',
+        name: ' Sales',
         type: 'pie',
         radius: ['40%', '70%'],
         center: ['50%', '50%'],
@@ -872,7 +880,7 @@ export const schemas: {
     },
     series: [
       {
-        name: 'Punch Card',
+        name: ' Sales',
         type: 'heatmap',
         // HBT data: {{{ column ' Sales' }}},
         label: {

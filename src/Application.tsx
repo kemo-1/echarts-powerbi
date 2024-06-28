@@ -96,12 +96,11 @@ export const Application: React.FC<ApplicationProps> = () => {
         host.tooltipService.hide({ immediately: true, isTouchEvent: false });
         host.tooltipService.show({
             coordinates: [params.event.offsetX, params.event.offsetY],
-            dataItems: params.dimensionNames.map((dm, index) => ({
-                header: params.name ,
-                displayName: dm,
-                value: params.data[index],
-
-            })),
+            dataItems: [{
+                header: params['seriesName'] ?? '',
+                displayName: params['name'] ?? '',
+                value: params['value'] ?? '',
+            }].filter((item) => item.value !== ''),
             isTouchEvent: false,
             identities: [
                 table.rows[params.dataIndex].selection
