@@ -232,7 +232,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                         <Layout style={{ padding: '0 0 15px 0', overflowY: 'auto', background: 'transparent' }}>
                             <Content
                                 style={{
-                                    padding: 5,
+                                    padding: 0,
                                     margin: 0,
                                     minHeight: 280,
                                     background: colorBgContainer,
@@ -274,6 +274,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                 <div className="card">
                                 <h4 className="card-title">Configuration</h4>
                                 <AceEditor
+                                    className="editor"
                                     width="100%"
                                     height={`${height * (9/10)}px`}
                                     mode="json"

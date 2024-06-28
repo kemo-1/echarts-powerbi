@@ -189,3 +189,9 @@
         100% {}
     }
 }
+
+.editor {
+    .ace_layer, .ace_gutter {
+        background: unset !important;
+    }
+}
