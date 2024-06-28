@@ -4,15 +4,14 @@ import powerbiApi from "powerbi-visuals-api";
 
 import { Viewer } from './View';
 import { Tutorial } from './Tutorial';
-import { Mapping } from './Mapping';
 import { QuickChart } from './QuickChart';
 import Handlebars from "handlebars";
 import JSON5 from 'json5'
 
 import { useAppSelector, useAppDispatch } from './redux/hooks';
-import { setSettings, reVerifyColumns } from './redux/slice';
+import { setSettings } from './redux/slice';
 import { IVisualSettings } from './settings';
-import { applyMapping, uncommentCodeComments } from './utils';
+import { uncommentCodeComments } from './utils';
 
 import { hardReset, registerGlobal } from "./handlebars/helpers"
 import { sanitizeHTML } from './utils'
@@ -34,7 +33,6 @@ export const Application: React.FC<ApplicationProps> = () => {
     const viewport = useAppSelector((state) => state.options.viewport);
     
     const dataset = useAppSelector((state) => state.options.dataset);
-    const unmappedColumns = useAppSelector((state) => state.options.unmappedColumns);
     const table = useAppSelector((state) => state.options.table);
 
     const chart = useAppSelector((state) => state.options.settings.chart.echart);
@@ -115,11 +113,7 @@ export const Application: React.FC<ApplicationProps> = () => {
         host.tooltipService.hide({ immediately: false, isTouchEvent: false});
     }, [host, table, dataset]);
 
-    if (!option || !settings) {
-        return (<h1>Loading...</h1>)
-    }
-
-    if (option.editMode === powerbiApi.EditMode.Advanced && dataView && dataView.table) {
+    if (option && option.editMode === powerbiApi.EditMode.Advanced && dataView && dataView.table) {
         return (
             <QuickChart
                 dataset={dataset}
@@ -136,37 +130,23 @@ export const Application: React.FC<ApplicationProps> = () => {
             />
         );
     }
-
-    // if (option && unmappedColumns.length) {
-    //     return (
-    //         <Mapping
-    //             dataView={dataView}
-    //             dataset={dataset}
-    //             unmappedColumns={unmappedColumns}
-    //             onSaveMapping={(mapping) => {
-    //                 const mappedJSON = applyMapping(settings.chart.echart, mapping, dataset);
-    //                 const newSettings: IVisualSettings = JSON5.parse(JSON5.stringify(settings));
-    //                 newSettings.chart.echart = mappedJSON;
-    //                 dispatch(setSettings(newSettings));
-    //                 dispatch(reVerifyColumns());
-    //                 persistProperty(mappedJSON);
-    //             }}
-    //         />
-    //     )
-    // }
-
-    if (!dataView || !dataView.categorical) {
+    
+    if (!dataView || !dataView.categorical || !settings) {
         const categorical = dataView?.categorical;
         if (!dataView && !categorical || settings && settings.chart.echart === '{}') {
             return (
                 <Tutorial
-                    height={option.viewport.height}
-                    width={option.viewport.width}
+                    height={viewport.height}
+                    width={viewport.width}
                     dataset={dataset}
                     host={host}
                 />
             )
         }
+    }
+    
+    if (!option || !settings) {
+        return (<h1>Loading...</h1>)
     }
 
     return (
