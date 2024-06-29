@@ -21,6 +21,15 @@
                     "type": {
                         "text": true
                     }
+                },
+                "resources": {
+                    "description": "Resources",
+                    "descriptionKey": "Visual_Resources",
+                    "displayName": "Resources",
+                    "displayNameKey": "Visual_Resources",
+                    "type": {
+                        "text": true
+                    }
                 }
             }
         },

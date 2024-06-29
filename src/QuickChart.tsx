@@ -21,7 +21,7 @@ import { useAppSelector } from "./redux/hooks";
 
 import { LoadDataFromFile, replaceResourceName } from "./utils/base64loader";
 
-import "./handlebars/helpers";
+import { registerVariable, unregisterVariable } from "./handlebars/helpers";
 
 import AceEditor from "react-ace";
 
@@ -106,6 +106,11 @@ const chartTree = {
     ]
 }
 
+export interface Resource {
+    size: string,
+    name: string,
+    value: string | ArrayBuffer | null
+}
 
 export interface QuickChartProps {
     width: number;
@@ -113,11 +118,12 @@ export interface QuickChartProps {
     dataset: echarts.EChartOption.Dataset;
     dataView: DataView;
     current: string;
-    onSave: (json: string) => void;
+    resources: Resource[];
+    onSave: (json: string, resources: Resource[]) => void;
 }
 
 /* eslintd-isable max-lines-per-function */
-export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: visualDataset, dataView, current, onSave }) => {
+export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: visualDataset, dataView, current, onSave, resources }) => {
 
     const [error] = React.useState<string>(null);
     const defaultSchema = schemas['Current'] || schemas['Basic Line Chart'];
@@ -126,17 +132,10 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
     const host = useAppSelector((state) => state.options.host);
     const [resourceName, setResourceName] = useState<string>('');
 
-    const [resourcesList, setResourcesList] = useState<{
-        size: string,
-        name: string,
-        value: string | ArrayBuffer | null
-    }[]>([{
-        size: '1kb',
-        name: 'echarts.min.js',
-        value: null
-    }]);
+    const [resourcesList, setResourcesList] = useState<Resource[]>(resources);
 
     const onRemoveResource = useCallback((index: number) => {
+        unregisterVariable(resourcesList[index].name);
         resourcesList.splice(index, 1);
         setResourcesList([...resourcesList]);
     }, [resourcesList, setResourcesList]);
@@ -201,6 +200,9 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
             return `data-selection-clear="true"`
         })
         registerGlobal('table', table)
+        Object.keys(resourcesList).forEach((key) => {
+            registerVariable(resources[key].name, resources[key].value);
+        })
         try {
             return template({
                 table,
@@ -217,7 +219,6 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
     const onApplySchema = React.useCallback(() => {
         setSchema(draft.current);
     }, [setSchema]);
-
 
     return (
         <>
@@ -261,7 +262,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                     <Flex vertical={false}>
                                         <Button type="primary" onClick={() => {
                                             setSchema(draft.current);
-                                            onSave(draft.current);
+                                            onSave(draft.current, resourcesList);
                                         }}>
                                             Save
                                         </Button>
@@ -334,11 +335,14 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                                                 <Flex vertical={false} className="resource-loader">
                                                                     <input ref={fileInput} type="file" style={{display: 'none'}} onChange={async () => {
                                                                         const data = await LoadDataFromFile(fileInput.current);
-                                                                        resourcesList.push({
+                                                                        if (!data) return;
+                                                                        const resource = {
                                                                             size: `${Math.round(fileInput.current.files[0].size / 1024)}kb`,
                                                                             name: replaceResourceName(resourceName || fileInput.current.files[0].name),
                                                                             value: data
-                                                                        });
+                                                                        };
+                                                                        resourcesList.push(resource);
+                                                                        registerVariable(resource.name, resource.value);
                                                                         setResourcesList([...resourcesList]);
                                                                     }} />
                                                                     <Input value={resourceName} placeholder="Resource name" width={300} onChange={(value) => {

@@ -14,4 +14,5 @@ export class VisualSettings extends DataViewObjectsParser implements IVisualSett
 
 export class Chart {
     public echart: string = "{}";
+    public resources: string = "[]";
 }

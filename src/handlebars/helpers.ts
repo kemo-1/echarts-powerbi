@@ -64,6 +64,14 @@ export function hardReset() {
     variables.clear();
 }
 
+export function registerVariable(name: string, value: string) {
+    variables.set(name, value);
+}
+
+export function unregisterVariable(name: string) {
+    variables.delete(name);
+}
+
 export function registerGlobal(name: string, value: unknown) {
     globals.set(name, value)
 }

@@ -17,7 +17,7 @@ export function LoadDataFromURL(url) : Promise<string | ArrayBuffer | null> {
     });
 }
 
-export function LoadDataFromFile(element: HTMLInputElement) : Promise<string | ArrayBuffer | null>
+export function LoadDataFromFile(element: HTMLInputElement) : Promise<string | null>
 {
     return new Promise((resolve, reject) => {
         if (!element.files || element.files.length === 0) {
@@ -27,7 +27,7 @@ export function LoadDataFromFile(element: HTMLInputElement) : Promise<string | A
         const file = element.files[0];
         const reader = new FileReader();
         reader.onloadend = function() {
-            resolve(reader.result)
+            resolve(reader.result as string)
         }
         reader.onerror = reject;
         reader.readAsDataURL(file);

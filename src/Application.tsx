@@ -4,7 +4,7 @@ import powerbiApi from "powerbi-visuals-api";
 
 import { Viewer } from './View';
 import { Tutorial } from './Tutorial';
-import { QuickChart } from './QuickChart';
+import { QuickChart, Resource } from './QuickChart';
 import Handlebars from "handlebars";
 import JSON5 from 'json5'
 
@@ -13,7 +13,7 @@ import { setSettings } from './redux/slice';
 import { IVisualSettings } from './settings';
 import { uncommentCodeComments } from './utils';
 
-import { hardReset, registerGlobal } from "./handlebars/helpers"
+import { hardReset, registerGlobal, registerVariable } from "./handlebars/helpers"
 import { sanitizeHTML } from './utils'
 import { helper } from 'echarts';
 
@@ -39,12 +39,13 @@ export const Application: React.FC<ApplicationProps> = () => {
     
     const dispatch = useAppDispatch();
 
-    const persistProperty = React.useCallback((json_string: string) => {
+    const persistProperty = React.useCallback((json_string: string, resources: string) => {
         const instance: powerbiApi.VisualObjectInstance = {
             objectName: "chart",
             selector: undefined,
             properties: {
-                echart: json_string
+                echart: json_string,
+                resources: resources
             }
         };
 
@@ -77,6 +78,10 @@ export const Application: React.FC<ApplicationProps> = () => {
             return `data-selection-clear="true"`
         })
         registerGlobal('table', table)
+        const resources: Resource[] = JSON5.parse(settings.chart.resources);
+        Object.keys(resources).forEach((key) => {
+            registerVariable(resources[key].name, resources[key].value);
+        });
         try {
             return template({
                 table,
@@ -137,11 +142,13 @@ export const Application: React.FC<ApplicationProps> = () => {
                 width={option.viewport.width}
                 dataView={dataView}
                 current={chart}
-                onSave={(json) => {
+                resources={JSON5.parse(settings.chart.resources)}
+                onSave={(json, resources) => {
                     const newSettings: IVisualSettings = JSON5.parse(JSON5.stringify(settings));
                     newSettings.chart.echart = json;
+                    newSettings.chart.resources = JSON.stringify(resources, null, "");
                     dispatch(setSettings(newSettings));
-                    persistProperty(json);
+                    persistProperty(json, newSettings.chart.resources);
                 }}
             />
         );
