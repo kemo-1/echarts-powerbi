@@ -112,6 +112,23 @@ export const Application: React.FC<ApplicationProps> = () => {
         host.tooltipService.hide({ immediately: false, isTouchEvent: false});
     }, [host, table, dataset]);
 
+    const onMouseContextMenuHandler = React.useCallback((params) => {
+        host.tooltipService.hide({ immediately: false, isTouchEvent: false});
+        if (params.dataIndex === undefined) {
+            selectionManager?.showContextMenu(null, {
+                x: params.event.event.clientX,
+                y: params.event.event.clientY
+            });
+        } else {
+            selectionManager?.showContextMenu(table.rows[params.dataIndex].selection, {
+                x: params.event.event.clientX,
+                y: params.event.event.clientY
+            });
+        }
+        params.event.event.preventDefault();
+        params.event.event.stopPropagation()
+    }, [host, table, dataset]);
+
     if (option && option.editMode === powerbiApi.EditMode.Advanced && dataView && dataView.table) {
         return (
             <QuickChart
@@ -154,6 +171,7 @@ export const Application: React.FC<ApplicationProps> = () => {
                 onClick={onClickHandler}
                 onMouseOver={onMouseOverHandler}
                 onMouseOut={onMouseOutHandler}
+                onContextMenu={onMouseContextMenuHandler}
                 dataset={dataset}
                 height={option.viewport.height}
                 width={option.viewport.width}

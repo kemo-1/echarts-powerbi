@@ -9,6 +9,7 @@ export interface ViewerProps {
     onClick?: (params: any) => void;
     onMouseOver?: (params: any) => void;
     onMouseOut?: (params: any) => void;
+    onContextMenu?: (params: any) => void;
     width: number;
     height: number;
     // echart?: echarts.EChartOption;
@@ -17,7 +18,7 @@ export interface ViewerProps {
 }
 
 /* eslint-disable max-lines-per-function */
-export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, dataset, onClick, onMouseOver, onMouseOut }) => {
+export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, dataset, onClick, onMouseOver, onMouseOut, onContextMenu }) => {
 
     const mainDiv = React.useRef<HTMLDivElement>();
     const chartInstance = React.useRef<echarts.EChartsType>();
@@ -65,6 +66,12 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
                     onMouseOut(params);
                 }
             });
+
+            chartInstance.current.on("contextmenu", (params) => {
+                if (onContextMenu) {
+                    onContextMenu(params);
+                }
+            });
         }
         catch(e) {
             setError(e.message);
@@ -110,6 +117,11 @@ export const Viewer: React.FC<ViewerProps> = ({ height, width, echartJSON, datas
             <Layout className={parsingError || error ? "hidden" : ""} style={{backgroundColor: 'transparent'}}>
                 <div
                     ref={mainDiv}
+                    onContextMenu={(event) => {
+                        onContextMenu({event: {
+                            event
+                        }})
+                    }}
                     id="main"
                     style={{
                         height: `${height}px`,
