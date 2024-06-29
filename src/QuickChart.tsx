@@ -232,7 +232,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                         <Sider className="card" width={200} style={{ background: colorBgContainer, overflowY: 'scroll' }}>
                             <Menu
                                 mode="inline"
-                                defaultSelectedKeys={['1']}
+                                defaultSelectedKeys={['Current']}
                                 defaultOpenKeys={['sub1']}
                                 style={{ height: '100%', borderRight: 0 }}
                                 items={chartGroups}
