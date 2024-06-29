@@ -492,7 +492,7 @@ export const schemas: {
         name: ' Sales',
         type: 'pie',
         radius: ['0%', '70%'],
-        center: ['50%', '50%'],
+        center: ['50%', '70%'],
         // adjust the start and end angle
         startAngle: 180,
         endAngle: 360,
@@ -635,7 +635,7 @@ export const schemas: {
         /* HBT
           {{#each table.rows}}
           {
-            max: 14000000,
+            max: 30000000,
             name: '{{this.[Country]}}'
           },
           {{/each}}
@@ -672,10 +672,10 @@ export const schemas: {
         name: ' Sales',
         type: 'pie',
         radius: ['40%', '70%'],
-        center: ['50%', '50%'],
+        center: ['50%', '70%'],
         // adjust the start and end angle
-        startAngle: 90,
-        endAngle: 180,
+        startAngle: 180,
+        endAngle: 360,
         /* HBT
          data: [ 
          {{#each table.rows}}
