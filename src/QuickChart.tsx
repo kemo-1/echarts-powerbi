@@ -355,6 +355,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                                                         title: 'Resource name',
                                                                         dataIndex: 'name',
                                                                         key: 'name',
+                                                                        render: (value: any, record: any, index: number) => <p className="user-select-all">{value}</p>
                                                                     },
                                                                     {
                                                                         title: 'Size',
