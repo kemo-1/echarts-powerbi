@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-import React from "react";
+import React, { useCallback, useRef, useState } from "react";
 import Handlebars from "handlebars";
 import JSON5 from 'json5'
 import * as echarts from 'echarts';
@@ -9,7 +9,8 @@ import DataView = powerbiApi.DataView;
 
 import { ErrorViewer } from "./Error";
 
-import { Button, Flex, Layout, Menu, MenuProps, theme } from 'antd';
+import { Button, Flex, Layout, Menu, MenuProps, theme, Tabs, Input, Table } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import { applyMapping, getChartColumns, verifyColumns, uncommentCodeComments } from "./utils";
 import { Mapping } from "./Mapping";
 import { Viewer } from "./View";
@@ -17,6 +18,8 @@ import { Viewer } from "./View";
 import { schemas } from './charts';
 import { hardReset, registerGlobal } from "./handlebars/helpers";
 import { useAppSelector } from "./redux/hooks";
+
+import { LoadDataFromFile, replaceResourceName } from "./utils/base64loader";
 
 import "./handlebars/helpers";
 
@@ -26,6 +29,7 @@ import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
 
+import 'echarts-gl';
 import { transform } from 'echarts-stat';
 echarts.registerTransform(transform.histogram);
 echarts.registerTransform(transform.clustering);
@@ -119,13 +123,29 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
     const defaultSchema = schemas['Current'] || schemas['Basic Line Chart'];
     const isString = typeof defaultSchema == 'string';
     const [schema, setSchema] = React.useState<string>(isString ? defaultSchema : JSON5.stringify(defaultSchema, null, " "));
-    console.log('schema', schema);
     const host = useAppSelector((state) => state.options.host);
+    const [resourceName, setResourceName] = useState<string>('');
+
+    const [resourcesList, setResourcesList] = useState<{
+        size: string,
+        name: string,
+        value: string | ArrayBuffer | null
+    }[]>([{
+        size: '1kb',
+        name: 'echarts.min.js',
+        value: null
+    }]);
+
+    const onRemoveResource = useCallback((index: number) => {
+        resourcesList.splice(index, 1);
+        setResourcesList([...resourcesList]);
+    }, [resourcesList, setResourcesList]);
+
+    const fileInput = useRef<HTMLInputElement>(null);
 
     const chartGroups: MenuProps['items'] = Object.keys(chartTree).map(
         (group) => {
-            if (chartTree[group].length === 0)
-            {
+            if (chartTree[group].length === 0) {
                 return {
                     key: group,
                     label: `${group}`,
@@ -198,7 +218,6 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
         setSchema(draft.current);
     }, [setSchema]);
 
-    console.log('content', content);
 
     return (
         <>
@@ -208,26 +227,26 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                 </>
             ) : (
                 <>
-                    <Layout style={{ height: '100%', background: 'transparent'}}>
+                    <Layout className="quick-chart" style={{ height: '100%', background: 'transparent' }}>
                         <Sider className="card" width={200} style={{ background: colorBgContainer, overflowY: 'scroll' }}>
-                                <Menu
-                                    mode="inline"
-                                    defaultSelectedKeys={['1']}
-                                    defaultOpenKeys={['sub1']}
-                                    style={{ height: '100%', borderRight: 0 }}
-                                    items={chartGroups}
-                                    onClick={(info) => {
-                                        if (info.key === 'Current') {
-                                            draft.current = current;
-                                            setSchema(current);
-                                        }
-                                        else if (schemas[info.key]) {
-                                            const isString = typeof schemas[info.key] == 'string';
-                                            draft.current = isString ? (schemas[info.key] as string) : JSON5.stringify(schemas[info.key], null, " ");
-                                            setSchema(draft.current);
-                                        }
-                                    }}
-                                />
+                            <Menu
+                                mode="inline"
+                                defaultSelectedKeys={['1']}
+                                defaultOpenKeys={['sub1']}
+                                style={{ height: '100%', borderRight: 0 }}
+                                items={chartGroups}
+                                onClick={(info) => {
+                                    if (info.key === 'Current') {
+                                        draft.current = current;
+                                        setSchema(current);
+                                    }
+                                    else if (schemas[info.key]) {
+                                        const isString = typeof schemas[info.key] == 'string';
+                                        draft.current = isString ? (schemas[info.key] as string) : JSON5.stringify(schemas[info.key], null, " ");
+                                        setSchema(draft.current);
+                                    }
+                                }}
+                            />
                         </Sider>
                         <Layout style={{ padding: '0 0 15px 0', overflowY: 'auto', background: 'transparent' }}>
                             <Content
@@ -254,7 +273,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                     <h4 className="card-title">Preview</h4>
                                     <Viewer
                                         dataset={dataset}
-                                        height={height * (9/10)}
+                                        height={height * (9 / 10)}
                                         width={width - 300}
                                         echartJSON={content}
                                     />
@@ -272,23 +291,87 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                     </>) : null}
                                 </div>
                                 <div className="card">
-                                <h4 className="card-title">Configuration</h4>
-                                <AceEditor
-                                    className="editor"
-                                    width="100%"
-                                    height={`${height * (9/10)}px`}
-                                    mode="json"
-                                    theme="github"
-                                    onChange={(edit) => {
-                                        draft.current = edit;
-                                    }}
-                                    setOptions={{
-                                        useWorker: false
-                                    }}
-                                    value={schema}
-                                    name="CONFIGURATION_ID"
-                                    editorProps={{ $blockScrolling: true }}
-                                />
+                                    <Tabs
+                                        className="tabs-header"
+                                        defaultActiveKey="1"
+                                        items={[
+                                            {
+                                                key: '1',
+                                                label: 'Configuration',
+                                                children: (
+                                                    <>
+                                                        <AceEditor
+                                                            className="editor"
+                                                            width="100%"
+                                                            height={`${height * (9 / 10)}px`}
+                                                            mode="json"
+                                                            theme="github"
+                                                            onChange={(edit) => {
+                                                                draft.current = edit;
+                                                            }}
+                                                            setOptions={{
+                                                                useWorker: false
+                                                            }}
+                                                            value={schema}
+                                                            name="CONFIGURATION_ID"
+                                                            editorProps={{ $blockScrolling: true }}
+                                                        />
+                                                    </>
+                                                )
+                                            },
+                                            {
+                                                key: '2',
+                                                label: 'Resources',
+                                                children: (
+                                                    <>
+                                                        <Flex vertical={true}>
+                                                            <div
+                                                                style={{
+                                                                    width:"100%",
+                                                                    height: `${height * (9 / 10)}px`
+                                                                }}
+                                                            >
+                                                                <Flex vertical={false} className="resource-loader">
+                                                                    <input ref={fileInput} type="file" style={{display: 'none'}} onChange={async () => {
+                                                                        const data = await LoadDataFromFile(fileInput.current);
+                                                                        resourcesList.push({
+                                                                            size: `${Math.round(fileInput.current.files[0].size / 1024)}kb`,
+                                                                            name: replaceResourceName(resourceName || fileInput.current.files[0].name),
+                                                                            value: data
+                                                                        });
+                                                                        setResourcesList([...resourcesList]);
+                                                                    }} />
+                                                                    <Input value={resourceName} placeholder="Resource name" width={300} onChange={(value) => {
+                                                                        setResourceName(value.target.value);
+                                                                    }} />
+                                                                    <Button onClick={() => fileInput.current.click()} className="resource-loader-button" type="primary" icon={<PlusOutlined />} />
+                                                                </Flex>
+                                                                <Table dataSource={resourcesList} columns={[
+                                                                    {
+                                                                        title: 'Resource name',
+                                                                        dataIndex: 'name',
+                                                                        key: 'name',
+                                                                    },
+                                                                    {
+                                                                        title: 'Size',
+                                                                        dataIndex: 'size',
+                                                                        key: 'size',
+                                                                    },
+                                                                    {
+                                                                        title: 'Action',
+                                                                        dataIndex: '',
+                                                                        key: 'remove',
+                                                                        render: (value: any, record: any, index: number) => <Button onClick={() => onRemoveResource(index)}>Delete</Button>,
+                                                                    }
+                                                                ]} />
+                                                            </div>
+                                                        </Flex>
+
+                                                    </>
+                                                )
+                                            }
+                                        ]}
+                                    />
                                 </div>
                             </Content>
                         </Layout>

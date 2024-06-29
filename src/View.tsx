@@ -2,6 +2,13 @@ import React from "react";
 import JSON5 from 'json5'
 import * as echarts from "echarts";
 
+
+import 'echarts-gl';
+import { transform } from 'echarts-stat';
+echarts.registerTransform(transform.histogram);
+echarts.registerTransform(transform.clustering);
+
+
 import { ErrorViewer } from "./Error";
 import Layout from "antd/es/layout/layout";
 
