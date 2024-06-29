@@ -201,7 +201,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
         })
         registerGlobal('table', table)
         Object.keys(resourcesList).forEach((key) => {
-            registerVariable(resources[key].name, resources[key].value);
+            registerVariable(resourcesList[key].name, resourcesList[key].value);
         })
         try {
             return template({
