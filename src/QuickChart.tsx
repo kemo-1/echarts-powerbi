@@ -322,6 +322,28 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                             },
                                             {
                                                 key: '2',
+                                                label: 'Configuration output',
+                                                children: (
+                                                    <>
+                                                        <AceEditor
+                                                            className="editor"
+                                                            width="100%"
+                                                            height={`${height * (9 / 10)}px`}
+                                                            mode="json"
+                                                            theme="github"
+                                                            setOptions={{
+                                                                useWorker: false,
+                                                                readOnly: true
+                                                            }}
+                                                            value={content}
+                                                            name="OUTPUT_ID"
+                                                            editorProps={{ $blockScrolling: true }}
+                                                        />
+                                                    </>
+                                                )
+                                            },
+                                            {
+                                                key: '3',
                                                 label: 'Resources',
                                                 children: (
                                                     <>
