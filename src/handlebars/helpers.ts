@@ -358,6 +358,17 @@ Handlebars.registerHelper('select', (...options) => {
     }
 })
 
+Handlebars.registerHelper('distinct', (name) => {
+    const table: Table = globals.get('table') as Table
+    const found = table.columns.find(c => c.displayName == name)
+    if (found) {
+        const column = table.rows.map(r => r[name]);
+        return "[" + [...new Set(column)].map(i => `"${i}"`).join(",") + "]"
+    } else {
+        return `Column "${name}" not found`
+    }
+})
+
 Handlebars.registerHelper('jsonArray', (...options) => {
     options.pop()
     const arr = options.pop();
