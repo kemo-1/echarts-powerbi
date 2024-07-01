@@ -98,14 +98,33 @@ export const Application: React.FC<ApplicationProps> = () => {
     }, [host, table, dataset]);
 
     const onMouseOverHandler = React.useCallback((params) => {
+        const dataItems = [];
+        switch (params.componentSubType) {
+            case 'scatter':
+                dataItems.push({
+                    header: params['seriesName'] ?? '',
+                    displayName: params.dimensionNames[0] ?? 'x',
+                    value: params['value']?.[0],
+                });
+                dataItems.push({
+                    header: params['seriesName'] ?? '',
+                    displayName: params.dimensionNames[0] ?? 'y',
+                    value: params['value']?.[1],
+                });
+                break;
+            default:
+                dataItems.push({
+                    header: params['seriesName'] ?? '',
+                    displayName: params['name'] ?? '',
+                    value: params['value'] ?? '',
+                });
+                break;
+        }
+
         host.tooltipService.hide({ immediately: true, isTouchEvent: false });
         host.tooltipService.show({
             coordinates: [params.event.offsetX, params.event.offsetY],
-            dataItems: [{
-                header: params['seriesName'] ?? '',
-                displayName: params['name'] ?? '',
-                value: params['value'] ?? '',
-            }].filter((item) => item.value !== ''),
+            dataItems: dataItems.filter((item) => item.value !== ''),
             isTouchEvent: false,
             identities: [
                 table.rows[params.dataIndex].selection
