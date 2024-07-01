@@ -13,6 +13,7 @@ import JSON5 from 'json5'
 import Series = EChartOption.Series;
 
 export type Column = Pick<DataViewMetadataColumn, "displayName" | "index">;
+export type PowerbiColumn = powerbiVisualsApi.DataViewCategoryColumn | powerbiVisualsApi.DataViewValueColumn
 
 export interface Row {
     [key: string]: PrimitiveValue | ISelectionId
@@ -225,29 +226,45 @@ export function walk(
     }
 }
 
-export function applyMapping(echartJson: string | undefined, mapping: Record<string, string>, dataset: echarts.EChartOption.Dataset) : string {
-    const echart = safeParse(echartJson);
+// export function applyMapping(echartJson: string | undefined, mapping: Record<string, string>, dataset: echarts.EChartOption.Dataset) : string {
+//     const echart = safeParse(echartJson);
     
-    if (echartJson && echartJson !== "{}") {
-        walk(null, echart, (key: string, value: any, parent: Record<string, any>, tail: string) => {
-            if (key === 'encode') {
-                Object.keys(value).forEach(attr => {
-                    value[attr] = mapping[attr];
-                });
-            }
+//     if (echartJson && echartJson !== "{}") {
+//         walk(null, echart, (key: string, value: any, parent: Record<string, any>, tail: string) => {
+//             if (key === 'encode') {
+//                 Object.keys(value).forEach(attr => {
+//                     value[attr] = mapping[attr];
+//                 });
+//             }
+//             if (key.endsWith('src')) {
+//                 const index = dataset.dimensions.indexOf(mapping[tail + "." + key]);
+//                 const vector = (<any[]>dataset.source).map(row => row[index]);
+//                 parent['value'] = vector;
+//                 parent[key] = mapping[tail + "." + key];
+//             }
+//         }, "options")
+//     }
+//     echart.dataset = {
+//         dimensions: dataset.dimensions
+//     };
+
+//     return JSON5.stringify(echart);
+// }
+
+export function applyData(echartJson: echarts.EChartOption, dataset: echarts.EChartOption.Dataset) : echarts.EChartOption {
+    if (echartJson) {
+        walk(null, echartJson, (key: string, value: any, parent: any, tail: string) => {
+            //
             if (key.endsWith('src')) {
-                const index = dataset.dimensions.indexOf(mapping[tail + "." + key]);
-                const vector = (<any[]>dataset.source).map(row => row[index]);
-                parent['value'] = vector;
-                parent[key] = mapping[tail + "." + key];
+                const datakey = key.replace(/(src)$/, '');
+                const columnIndex = dataset.dimensions.indexOf(value);
+                const vector = (<any[]>dataset.source).map(row => row[columnIndex]);
+                parent[datakey] = vector;
             }
         }, "options")
     }
-    echart.dataset = {
-        dimensions: dataset.dimensions
-    };
 
-    return JSON5.stringify(echart);
+    return echartJson;
 }
 
 export function verifyColumns(echartJson: string | undefined, chartColumns: string[], visualColumns: powerbiVisualsApi.DataViewMetadataColumn[]) : Record<string, string>[] {
@@ -278,23 +295,23 @@ export function verifyColumns(echartJson: string | undefined, chartColumns: stri
     return unmappedColumns;
 }
 
-export function verifyColumnsByType(options: EChartOption<Series>, visualColumns: powerbiVisualsApi.DataViewMetadataColumn[]) {
+// export function verifyColumnsByType(options: EChartOption<Series>, visualColumns: powerbiVisualsApi.DataViewMetadataColumn[]) {
 
-    const unmappedColumns: string[] = [];
+//     const unmappedColumns: string[] = [];
 
-    if (options.series) {
-        options.series.forEach(series => {
-            if (series.type === 'line') {
-                const line: LineSeriesOption = (series as LineSeriesOption);
-                if (line.encode['x']) {
-                    if (visualColumns.find(vc => vc.displayName === line.encode['x'])) {
-                        unmappedColumns.push(line.encode['x'] as string);
-                    }
-                } 
-            }
-        });
-    }
-}
+//     if (options.series) {
+//         options.series.forEach(series => {
+//             if (series.type === 'line') {
+//                 const line: LineSeriesOption = (series as LineSeriesOption);
+//                 if (line.encode['x']) {
+//                     if (visualColumns.find(vc => vc.displayName === line.encode['x'])) {
+//                         unmappedColumns.push(line.encode['x'] as string);
+//                     }
+//                 } 
+//             }
+//         });
+//     }
+// }
 
 
 export function getTheFirstDataset(dataset: echarts.EChartOption.Dataset | echarts.EChartOption.Dataset[]) : echarts.EChartOption.Dataset {

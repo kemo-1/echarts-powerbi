@@ -14,8 +14,6 @@ import { IVisualSettings } from './settings';
 import { uncommentCodeComments } from './utils';
 
 import { hardReset, registerGlobal, registerVariable } from "./handlebars/helpers"
-import { sanitizeHTML } from './utils'
-import { helper } from 'echarts';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ApplicationProps {

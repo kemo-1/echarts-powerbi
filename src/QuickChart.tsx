@@ -11,8 +11,8 @@ import { ErrorViewer } from "./Error";
 
 import { Button, Flex, Layout, Menu, MenuProps, theme, Tabs, Input, Table } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { applyMapping, getChartColumns, verifyColumns, uncommentCodeComments } from "./utils";
-import { Mapping } from "./Mapping";
+import { getChartColumns, verifyColumns, uncommentCodeComments } from "./utils";
+// import { Mapping } from "./Mapping";
 import { Viewer } from "./View";
 
 import { schemas } from './charts';
@@ -170,7 +170,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
     } = theme.useToken();
 
     const chartColumns = getChartColumns(schema);
-    const unmappedColumns = verifyColumns(schema, chartColumns, []/*to get all columns for mapping*/);
+    // const unmappedColumns = verifyColumns(schema, chartColumns, []/*to get all columns for mapping*/);
 
     const mappingIsCorrect = verifyColumns(schema, chartColumns, dataView.metadata.columns).length === 0;
 
@@ -278,7 +278,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                         width={width - 300}
                                         echartJSON={content}
                                     />
-                                    {unmappedColumns.length ? (<>
+                                    {/* {unmappedColumns.length ? (<>
                                         <h4>Mapping</h4>
                                         <Mapping
                                             dataView={dataView}
@@ -289,7 +289,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                                 setSchema(mappedJSON);
                                             }}
                                         />
-                                    </>) : null}
+                                    </>) : null} */}
                                 </div>
                                 <div className="card">
                                     <Tabs

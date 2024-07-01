@@ -9,7 +9,7 @@ import ISelectionManager = powerbiVisualsApi.extensibility.ISelectionManager;
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { IVisualSettings, VisualSettings } from "../settings";
-import { Table, convertData, createDataset, getChartColumns, verifyColumns } from "../utils";
+import { Table, convertData, createDataset } from "../utils";
 import { EChartOption } from "echarts";
 
 export interface VisualState {
@@ -20,7 +20,6 @@ export interface VisualState {
     viewport: IViewport;
     dataset: EChartOption.Dataset;
     table: Table;
-    unmappedColumns: any[];
     dataView: DataView;
 }
 
@@ -34,7 +33,6 @@ const initialState: VisualState = {
         columns: [],
         rows: []
     },
-    unmappedColumns: [],
     dataView: null,
     viewport: {
         height: 0,
@@ -58,22 +56,17 @@ export const slice = createSlice({
             state.dataView = state.options.dataViews[0];
             state.dataset = createDataset(state.dataView);
             state.table = convertData(state.dataView, state.host);
-            const chartColumns = getChartColumns(state.settings.chart.echart);
-            state.unmappedColumns = chartColumns && state.dataView.metadata.columns ? verifyColumns(state.settings.chart.echart, chartColumns, state.dataView.metadata.columns) : [];
         },
         setSettings: (state, action: PayloadAction<IVisualSettings>) => {
             state.settings = action.payload;
         },
         setViewport: (state, action: PayloadAction<IViewport>) => {
             state.viewport = action.payload;
-        }, 
-        reVerifyColumns: (state) => {
-            state.unmappedColumns = verifyColumns(state.settings.chart.echart, getChartColumns(state.settings.chart.echart), state.dataView.metadata.columns);
         }
     },
 })
 
 // Action creators are generated for each case reducer function
-export const { setHost, setOptions, setViewport, setSettings, reVerifyColumns } = slice.actions
+export const { setHost, setOptions, setViewport, setSettings } = slice.actions
 
 export default slice.reducer

@@ -1137,7 +1137,7 @@ export const schemas: {
         },
         data: [
           {
-            value: 50,
+            valuesrc: 'Sum of  Sales',
             name: 'SCORE'
           }
         ]
