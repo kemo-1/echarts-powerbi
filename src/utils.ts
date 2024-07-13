@@ -296,9 +296,7 @@ export function verifyColumns(echartJson: string | undefined, chartColumns: stri
 }
 
 // export function verifyColumnsByType(options: EChartOption<Series>, visualColumns: powerbiVisualsApi.DataViewMetadataColumn[]) {
-
 //     const unmappedColumns: string[] = [];
-
 //     if (options.series) {
 //         options.series.forEach(series => {
 //             if (series.type === 'line') {
@@ -312,7 +310,6 @@ export function verifyColumns(echartJson: string | undefined, chartColumns: stri
 //         });
 //     }
 // }
-
 
 export function getTheFirstDataset(dataset: echarts.EChartOption.Dataset | echarts.EChartOption.Dataset[]) : echarts.EChartOption.Dataset {
     let ds;

@@ -123,8 +123,7 @@ export interface QuickChartProps {
 }
 
 /* eslintd-isable max-lines-per-function */
-export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: visualDataset, dataView, current, onSave, resources }) => {
-
+export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: visualDataset, current, onSave, resources }) => {
     const [error] = React.useState<string>(null);
     const defaultSchema = schemas['Current'] || schemas['Basic Line Chart'];
     const isString = typeof defaultSchema == 'string';
@@ -169,12 +168,7 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
         token: { colorBgContainer },
     } = theme.useToken();
 
-    const chartColumns = getChartColumns(schema);
-    // const unmappedColumns = verifyColumns(schema, chartColumns, []/*to get all columns for mapping*/);
-
-    const mappingIsCorrect = verifyColumns(schema, chartColumns, dataView.metadata.columns).length === 0;
-
-    const dataset = mappingIsCorrect ? visualDataset : JSON5.parse(schema).dataset;
+    const dataset = visualDataset;
     const table = useAppSelector((state) => state.options.table);
     const viewport = useAppSelector((state) => state.options.viewport);
 
@@ -278,18 +272,6 @@ export const QuickChart: React.FC<QuickChartProps> = ({ height, width, dataset: 
                                         width={width - 300}
                                         echartJSON={content}
                                     />
-                                    {/* {unmappedColumns.length ? (<>
-                                        <h4>Mapping</h4>
-                                        <Mapping
-                                            dataView={dataView}
-                                            dataset={visualDataset}
-                                            unmappedColumns={unmappedColumns}
-                                            onSaveMapping={(mapping) => {
-                                                const mappedJSON = applyMapping(schema, mapping, visualDataset);
-                                                setSchema(mappedJSON);
-                                            }}
-                                        />
-                                    </>) : null} */}
                                 </div>
                                 <div className="card">
                                     <Tabs
