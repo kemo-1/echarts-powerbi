@@ -17,8 +17,8 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm ci
-    - run: npx powerbi-visuals-tools package
+    - run: yarn install
+    - run: yarn package
     - name: Push
       uses: s0/git-publish-subdir-action@develop
       env:
