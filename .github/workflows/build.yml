@@ -18,7 +18,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
-    - run: npm audit
+    - run: npm audit fix --force
       continue-on-error: true
     - run: npm outdated
       continue-on-error: true
