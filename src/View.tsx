@@ -2,7 +2,7 @@ import React from "react";
 import JSON5 from 'json5'
 import * as echarts from "echarts";
 
-
+import './Saudi_Arabia.js'
 import 'echarts-gl';
 import { transform } from 'echarts-stat';
 echarts.registerTransform(transform.histogram);
