@@ -5,6 +5,8 @@ import reactDom from 'react-dom';
 import { Application } from './Application';
 
 import "../style/visual.scss";
+import '../src/Saudi_Arabia.js'
+
 import powerbiVisualsApi from "powerbi-visuals-api";
 import VisualConstructorOptions = powerbiVisualsApi.extensibility.visual.VisualConstructorOptions;
 import VisualUpdateOptions = powerbiVisualsApi.extensibility.visual.VisualUpdateOptions;
