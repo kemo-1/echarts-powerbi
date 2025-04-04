@@ -18,7 +18,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
-    - run: pbiviz package
+    - run: npx pbiviz package
     - name: Push
       uses: s0/git-publish-subdir-action@develop
       env:
